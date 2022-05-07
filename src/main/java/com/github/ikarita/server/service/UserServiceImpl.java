@@ -3,10 +3,17 @@ package com.github.ikarita.server.service;
 import com.github.ikarita.server.model.dto.*;
 import com.github.ikarita.server.model.entities.Role;
 import com.github.ikarita.server.model.entities.User;
+import com.github.ikarita.server.model.mappers.RoleMapper;
+import com.github.ikarita.server.model.mappers.UserMapper;
 import com.github.ikarita.server.repository.RoleRepository;
 import com.github.ikarita.server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -18,22 +25,50 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final UserMapper userMapper;
+    private final RoleMapper roleMapper;
+
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if(user.isEmpty()){
+            final String message = String.format("User '%s' not found", username);
+            log.error(message);
+            throw new UsernameNotFoundException(message);
+        }
+
+        log.info("User '{}' found", username);
+
+        final List<SimpleGrantedAuthority> authorities = user.get().getRoles().stream()
+                .map(r -> new SimpleGrantedAuthority(r.getName()))
+                .collect(Collectors.toList());
+
+        return new org.springframework.security.core.userdetails.User(
+                user.get().getUsername(),
+                user.get().getPassword(),
+                authorities
+        );
+    }
 
     @Override
     public UserDto saveUser(NewUserDto newUserDto) {
         log.info("Saving user '{}'", newUserDto.getUsername());
-        final User userEntity = userRepository.save(Mapper.USER.manyToOne(newUserDto));
-        return Mapper.USER.oneToMany(UserDto.class, userEntity);
+        newUserDto.setPassword(passwordEncoder.encode(newUserDto.getPassword()));
+        final User userEntity = userRepository.save(userMapper.newUserTdoToUser(newUserDto));
+        return userMapper.userToUserDto(userEntity);
     }
 
     @Override
     public RoleDto saverRole(NewRoleDto newRoleDto) {
         log.info("Saving role '{}'", newRoleDto.getName());
-        final Role roleEntity = roleRepository.save(Mapper.ROLE.manyToOne(newRoleDto));
-        return Mapper.ROLE.oneToMany(RoleDto.class, roleEntity);
+        final Role roleEntity = roleRepository.save(roleMapper.newRoleDtoToRole(newRoleDto));
+        return roleMapper.roleToRoleDto(roleEntity);
     }
 
     @Override
@@ -74,14 +109,14 @@ public class UserServiceImpl implements UserService{
             ));
         }
 
-        return Mapper.USER.oneToMany(UserDto.class, user.get());
+        return userMapper.userToUserDto(user.get());
     }
 
     @Override
     public List<UserDto> getUsers() {
         log.info("Getting all users");
         return userRepository.findAll().stream()
-                .map(u -> Mapper.USER.oneToMany(UserDto.class, u))
+                .map(userMapper::userToUserDto)
                 .collect(Collectors.toList());
     }
 }
