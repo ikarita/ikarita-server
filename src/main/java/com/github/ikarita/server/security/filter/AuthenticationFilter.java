@@ -1,7 +1,6 @@
 package com.github.ikarita.server.security.filter;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
+import com.github.ikarita.server.security.JwtUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,12 +14,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
+import java.io.IOException;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
 @AllArgsConstructor
-public class IkaritaAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
 
     @Override
@@ -36,23 +36,15 @@ public class IkaritaAuthenticationFilter extends UsernamePasswordAuthenticationF
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
         final User user = (User)authentication.getPrincipal();
-        final Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-        final String access_token = JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
-                .withIssuer(request.getRequestURL().toString())
-                .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-                .sign(algorithm);
+        final List<String> roles = user.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
 
-        final String refresh_token = JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
-                .withIssuer(request.getRequestURL().toString())
-                .sign(algorithm);
+        final String access_token = JwtUtils.createAccessToken(request, user.getUsername(), roles);
+        final String refresh_token = JwtUtils.createRefreshToken(request, user.getUsername());
 
-        response.setHeader("access_token", access_token);
-        response.setHeader("refresh_token", refresh_token);
+        JwtUtils.setJwtResponse(response, access_token, refresh_token);
     }
 }
