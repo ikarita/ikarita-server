@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class NewRoleForUserDto {
+public class NewCommunityRoleForUserDto {
     private String username;
     private String roleName;
 }

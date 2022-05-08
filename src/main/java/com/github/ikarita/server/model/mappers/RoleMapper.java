@@ -1,12 +1,12 @@
 package com.github.ikarita.server.model.mappers;
 
-import com.github.ikarita.server.model.dto.NewRoleDto;
-import com.github.ikarita.server.model.dto.RoleDto;
-import com.github.ikarita.server.model.entities.Role;
+import com.github.ikarita.server.model.dto.CommunityRoleDto;
+import com.github.ikarita.server.model.dto.NewCommunityRoleDto;
+import com.github.ikarita.server.model.entities.CommunityRole;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface RoleMapper {
-    Role newRoleDtoToRole(NewRoleDto newRoleDto);
-    RoleDto roleToRoleDto(Role role);
+    CommunityRole newRoleDtoToRole(NewCommunityRoleDto newCommunityRoleDto);
+    CommunityRoleDto roleToRoleDto(CommunityRole communityRole);
 }

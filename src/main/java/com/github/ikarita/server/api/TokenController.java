@@ -2,7 +2,7 @@ package com.github.ikarita.server.api;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.ikarita.server.model.dto.UserDto;
-import com.github.ikarita.server.model.entities.Role;
+import com.github.ikarita.server.model.entities.CommunityRole;
 import com.github.ikarita.server.security.JwtUtils;
 import com.github.ikarita.server.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +33,8 @@ public class TokenController {
             final DecodedJWT decodedToken = JwtUtils.decodeToken(refresh_token);
             final String username = decodedToken.getSubject();
             final UserDto user = userService.getUser(username);
-            final List<String> roles = user.getRoles().stream()
-                    .map(Role::getName)
+            final List<String> roles = user.getCommunityRoles().stream()
+                    .map(CommunityRole::getName)
                     .collect(Collectors.toList());
 
             final String access_token = JwtUtils.createAccessToken(request, username, roles);

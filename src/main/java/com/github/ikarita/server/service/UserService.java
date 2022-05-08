@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface UserService {
     UserDto saveUser(NewUserDto user);
-    RoleDto saverRole(NewRoleDto role);
-    void addRoleToUser(NewRoleForUserDto roleForUser);
+    CommunityRoleDto saverRole(NewCommunityRoleDto role);
+    void addRoleToUser(NewCommunityRoleForUserDto roleForUser);
     UserDto getUser(String username);
     List<UserDto> getUsers();
 }

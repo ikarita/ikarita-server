@@ -33,13 +33,13 @@ public class UserController {
     }
 
     @PostMapping("/roles/save")
-    public ResponseEntity<RoleDto> saveRole(@RequestBody NewRoleDto role){
+    public ResponseEntity<CommunityRoleDto> saveRole(@RequestBody NewCommunityRoleDto role){
         final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/v1/roles/save").toUriString());
         return ResponseEntity.created(uri).body(userService.saverRole(role));
     }
 
     @PostMapping("/users/role/save")
-    public ResponseEntity<?> addRoleToUser(@RequestBody NewRoleForUserDto roleForUser){
+    public ResponseEntity<?> addRoleToUser(@RequestBody NewCommunityRoleForUserDto roleForUser){
         userService.addRoleToUser(roleForUser);
         return ResponseEntity.ok().build();
     }

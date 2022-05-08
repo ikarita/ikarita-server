@@ -1,12 +1,13 @@
 package com.github.ikarita.server.service;
 
 import com.github.ikarita.server.model.dto.*;
-import com.github.ikarita.server.model.entities.Role;
+import com.github.ikarita.server.model.entities.CommunityRole;
 import com.github.ikarita.server.model.entities.User;
 import com.github.ikarita.server.model.mappers.RoleMapper;
 import com.github.ikarita.server.model.mappers.UserMapper;
 import com.github.ikarita.server.repository.RoleRepository;
 import com.github.ikarita.server.repository.UserRepository;
+import com.github.ikarita.server.security.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -45,8 +46,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         log.info("User '{}' found", username);
 
-        final List<SimpleGrantedAuthority> authorities = user.get().getRoles().stream()
-                .map(r -> new SimpleGrantedAuthority(r.getName()))
+        final List<SimpleGrantedAuthority> authorities = user.get().getUserRoles().stream()
+                .map(r -> new SimpleGrantedAuthority(r.name()))
                 .collect(Collectors.toList());
 
         return new org.springframework.security.core.userdetails.User(
@@ -65,14 +66,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public RoleDto saverRole(NewRoleDto newRoleDto) {
-        log.info("Saving role '{}'", newRoleDto.getName());
-        final Role roleEntity = roleRepository.save(roleMapper.newRoleDtoToRole(newRoleDto));
-        return roleMapper.roleToRoleDto(roleEntity);
+    public CommunityRoleDto saverRole(NewCommunityRoleDto newCommunityRoleDto) {
+        log.info("Saving role '{}'", newCommunityRoleDto.getName());
+        final CommunityRole communityRoleEntity = roleRepository.save(roleMapper.newRoleDtoToRole(newCommunityRoleDto));
+        return roleMapper.roleToRoleDto(communityRoleEntity);
     }
 
     @Override
-    public void addRoleToUser(NewRoleForUserDto roleForUser) {
+    public void addRoleToUser(NewCommunityRoleForUserDto roleForUser) {
         final String roleName = roleForUser.getRoleName();
         final String username = roleForUser.getUsername();
 
@@ -86,8 +87,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             ));
         }
 
-        final Optional<Role> role = roleRepository.findByName(roleName);
-        if(role.isEmpty()){
+        final UserRole userRole = UserRole.valueOf(roleName);
+        if(userRole == null){
             throw new IllegalArgumentException(String.format(
                     "Failed to add role '%s' to user '%s': Role does not exist.",
                     roleName,
@@ -95,7 +96,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             ));
         }
 
-        user.get().getRoles().add(role.get());
+        user.get().getUserRoles().add(userRole);
     }
 
     @Override
