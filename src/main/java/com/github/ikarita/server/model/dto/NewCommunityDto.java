@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class NewCommunityRoleDto {
+public class NewCommunityDto {
     private String name;
-    private CommunitySimpleDto community;
+    private boolean isPublic;
 }

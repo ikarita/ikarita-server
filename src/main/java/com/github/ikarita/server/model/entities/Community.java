@@ -1,11 +1,19 @@
 package com.github.ikarita.server.model.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.checkerframework.common.aliasing.qual.Unique;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "ikarita_community")
 public class Community {
     @Id
@@ -14,5 +22,6 @@ public class Community {
     @Unique
     private String name;
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL)
-    private Set<CommunityUser> communities;
+    private Set<CommunityUser> users;
+    private boolean isPublic;
 }

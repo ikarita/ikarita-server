@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface RoleRepository extends JpaRepository<CommunityRole, Long> {
+public interface CommunityRoleRepository extends JpaRepository<CommunityRole, Long> {
     Optional<CommunityRole> findByName(String name);
 }

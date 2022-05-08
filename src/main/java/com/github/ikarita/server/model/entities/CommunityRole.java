@@ -12,7 +12,7 @@ import java.util.Collection;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "ikarita_role")
+@Table(name = "ikarita_community_role")
 public class CommunityRole {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,4 +21,7 @@ public class CommunityRole {
     @ElementCollection
     @Enumerated(EnumType.STRING)
     private Collection<CommunityPermission> permissions = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "community_id")
+    private Community community;
 }

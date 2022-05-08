@@ -1,9 +1,10 @@
 package com.github.ikarita.server;
 
-import com.github.ikarita.server.model.dto.NewCommunityRoleDto;
-import com.github.ikarita.server.model.dto.NewCommunityRoleForUserDto;
-import com.github.ikarita.server.model.dto.NewUserDto;
+import com.github.ikarita.server.model.dto.*;
+import com.github.ikarita.server.model.mappers.CommunityMapper;
 import com.github.ikarita.server.security.UserRole;
+import com.github.ikarita.server.service.CommunityRoleService;
+import com.github.ikarita.server.service.CommunityService;
 import com.github.ikarita.server.service.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -18,12 +19,14 @@ public class IkaritaServerApplication {
 	}
 
 	@Bean
-	CommandLineRunner run(UserService userService){
+	CommandLineRunner run(UserService userService, CommunityRoleService communityRoleService, CommunityService communityService, CommunityMapper communityMapper){
 		return args -> {
-			userService.saverRole(new NewCommunityRoleDto("ROLE_USER"));
-			userService.saverRole(new NewCommunityRoleDto("ROLE_MANAGER"));
-			userService.saverRole(new NewCommunityRoleDto("ROLE_ADMIN"));
-			userService.saverRole(new NewCommunityRoleDto("ROLE_SUPER_ADMIN"));
+			CommunityDto niceCommunityDto = communityService.createCommunity(new NewCommunityDto("Nice community", true));
+			CommunitySimpleDto niceCommunity = communityMapper.asSimpleDto(communityMapper.asEntity(niceCommunityDto));
+			communityRoleService.createRole(new NewCommunityRoleDto("ROLE_USER", niceCommunity));
+			communityRoleService.createRole(new NewCommunityRoleDto("ROLE_MANAGER", niceCommunity));
+			communityRoleService.createRole(new NewCommunityRoleDto("ROLE_ADMIN", niceCommunity));
+			communityRoleService.createRole(new NewCommunityRoleDto("ROLE_SUPER_ADMIN", niceCommunity));
 
 			userService.saveUser(new NewUserDto("John Travolta", "john@gmail.com", "1234"));
 			userService.saveUser(new NewUserDto("Jim Carray", "jim@gmail.com", "1234"));

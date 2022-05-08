@@ -16,31 +16,24 @@ import java.net.URI;
 import java.util.List;
 
 @Controller
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/users")
+    @GetMapping("/")
     public ResponseEntity<List<UserDto>> getUsers() {
         return ResponseEntity.ok().body(userService.getUsers());
     }
 
-    @PostMapping("/users/save")
+    @PostMapping("/save")
     public ResponseEntity<UserDto> saveUser(@RequestBody NewUserDto user){
         final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/v1/users/save").toUriString());
         return ResponseEntity.created(uri).body(userService.saveUser(user));
     }
 
-    @PostMapping("/roles/save")
-    public ResponseEntity<CommunityRoleDto> saveRole(@RequestBody NewCommunityRoleDto role){
-        final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/v1/roles/save").toUriString());
-        return ResponseEntity.created(uri).body(userService.saverRole(role));
-    }
-
-    @PostMapping("/users/role/save")
-    public ResponseEntity<?> addRoleToUser(@RequestBody NewCommunityRoleForUserDto roleForUser){
-        userService.addRoleToUser(roleForUser);
-        return ResponseEntity.ok().build();
+    @PostMapping("/role/add")
+    public ResponseEntity<UserDto> addRoleToUser(@RequestBody NewCommunityRoleForUserDto roleForUser){
+        return ResponseEntity.ok().body(userService.addRoleToUser(roleForUser));
     }
 }

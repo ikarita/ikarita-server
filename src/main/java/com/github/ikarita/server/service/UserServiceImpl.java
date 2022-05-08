@@ -1,11 +1,8 @@
 package com.github.ikarita.server.service;
 
 import com.github.ikarita.server.model.dto.*;
-import com.github.ikarita.server.model.entities.CommunityRole;
 import com.github.ikarita.server.model.entities.User;
-import com.github.ikarita.server.model.mappers.RoleMapper;
 import com.github.ikarita.server.model.mappers.UserMapper;
-import com.github.ikarita.server.repository.RoleRepository;
 import com.github.ikarita.server.repository.UserRepository;
 import com.github.ikarita.server.security.UserRole;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +25,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final UserMapper userMapper;
-    private final RoleMapper roleMapper;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -61,19 +56,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserDto saveUser(NewUserDto newUserDto) {
         log.info("Saving user '{}'", newUserDto.getUsername());
         newUserDto.setPassword(passwordEncoder.encode(newUserDto.getPassword()));
-        final User userEntity = userRepository.save(userMapper.newUserTdoToUser(newUserDto));
-        return userMapper.userToUserDto(userEntity);
+        final User userEntity = userRepository.save(userMapper.asEntity(newUserDto));
+        return userMapper.asDto(userEntity);
     }
 
     @Override
-    public CommunityRoleDto saverRole(NewCommunityRoleDto newCommunityRoleDto) {
-        log.info("Saving role '{}'", newCommunityRoleDto.getName());
-        final CommunityRole communityRoleEntity = roleRepository.save(roleMapper.newRoleDtoToRole(newCommunityRoleDto));
-        return roleMapper.roleToRoleDto(communityRoleEntity);
-    }
-
-    @Override
-    public void addRoleToUser(NewCommunityRoleForUserDto roleForUser) {
+    public UserDto addRoleToUser(NewCommunityRoleForUserDto roleForUser) {
         final String roleName = roleForUser.getRoleName();
         final String username = roleForUser.getUsername();
 
@@ -87,8 +75,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             ));
         }
 
-        final UserRole userRole = UserRole.valueOf(roleName);
-        if(userRole == null){
+        UserRole userRole;
+
+        try {
+            userRole = UserRole.valueOf(roleName);
+        }
+        catch (Exception e){
             throw new IllegalArgumentException(String.format(
                     "Failed to add role '%s' to user '%s': Role does not exist.",
                     roleName,
@@ -97,6 +89,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
 
         user.get().getUserRoles().add(userRole);
+        return userMapper.asDto(user.get());
     }
 
     @Override
@@ -110,14 +103,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             ));
         }
 
-        return userMapper.userToUserDto(user.get());
+        return userMapper.asDto(user.get());
     }
 
     @Override
     public List<UserDto> getUsers() {
         log.info("Getting all users");
         return userRepository.findAll().stream()
-                .map(userMapper::userToUserDto)
+                .map(userMapper::asDto)
                 .collect(Collectors.toList());
     }
 }

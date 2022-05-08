@@ -25,7 +25,7 @@ class UserMapperTest {
                 Collections.emptySet()
         );
 
-        final UserDto userDto = mapper.userToUserDto(user);
+        final UserDto userDto = mapper.asDto(user);
 
         assertEquals(1L, userDto.getId());
         assertEquals("John", userDto.getUsername());
