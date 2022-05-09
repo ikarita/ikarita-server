@@ -14,12 +14,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
 @Controller
-@RequestMapping("/api/v1/roles")
+@RequestMapping("/api/v1/community/roles")
 @RequiredArgsConstructor
 public class CommunityRoleController {
     private final CommunityRoleService communityRoleService;
 
-    @PostMapping("/save")
+    @PostMapping("/create")
     public ResponseEntity<CommunityRoleDto> saveRole(@RequestBody NewCommunityRoleDto role){
         final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/v1/roles/save").toUriString());
         return ResponseEntity.created(uri).body(communityRoleService.createRole(role));

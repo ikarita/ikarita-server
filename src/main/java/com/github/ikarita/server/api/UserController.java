@@ -5,14 +5,9 @@ import com.github.ikarita.server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -21,18 +16,23 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<UserDto>> getUsers() {
         return ResponseEntity.ok().body(userService.getUsers());
     }
 
-    @PostMapping("/save")
-    public ResponseEntity<UserDto> saveUser(@RequestBody NewUserDto user){
-        final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/v1/users/save").toUriString());
-        return ResponseEntity.created(uri).body(userService.saveUser(user));
+    @PostMapping
+    public ResponseEntity<UserDto> createUser(@RequestBody NewUserDto user){
+        return ResponseEntity.ok().body(userService.createUser(user));
     }
 
-    @PostMapping("/role/add")
+    @DeleteMapping(path = "/ban/{userId}")
+    public ResponseEntity<UserDto> banUser(HttpServletRequest request, @PathVariable("userId") Long userId){
+        userService.banUser(userId);
+        return ResponseEntity.created(PathUtils.getURI(request)).build();
+    }
+
+    @PostMapping("/roles")
     public ResponseEntity<UserDto> addRoleToUser(@RequestBody NewCommunityRoleForUserDto roleForUser){
         return ResponseEntity.ok().body(userService.addRoleToUser(roleForUser));
     }

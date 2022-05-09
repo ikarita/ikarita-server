@@ -27,4 +27,6 @@ public class User {
     private Set<UserRole> userRoles;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<CommunityUser> communities;
+    @Column(columnDefinition = "boolean default false")
+    private boolean isBanned;
 }

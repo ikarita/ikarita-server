@@ -23,5 +23,8 @@ public class Community {
     private String name;
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL)
     private Set<CommunityUser> users;
+    @Column(columnDefinition = "boolean default true")
     private boolean isPublic;
+    @Column(columnDefinition = "boolean default true")
+    private boolean isActive;
 }

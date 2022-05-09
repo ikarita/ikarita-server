@@ -22,7 +22,8 @@ class UserMapperTest {
                 "john@gmail.com",
                 "secret",
                 Sets.newHashSet(UserRole.VIEWER),
-                Collections.emptySet()
+                Collections.emptySet(),
+                false
         );
 
         final UserDto userDto = mapper.asDto(user);

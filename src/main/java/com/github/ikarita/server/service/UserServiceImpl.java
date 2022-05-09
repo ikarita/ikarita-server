@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public UserDto saveUser(NewUserDto newUserDto) {
+    public UserDto createUser(NewUserDto newUserDto) {
         log.info("Saving user '{}'", newUserDto.getUsername());
         newUserDto.setPassword(passwordEncoder.encode(newUserDto.getPassword()));
         final User userEntity = userRepository.save(userMapper.asEntity(newUserDto));
@@ -112,5 +112,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepository.findAll().stream()
                 .map(userMapper::asDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void banUser(Long userId) {
+        final Optional<User> user = userRepository.findById(userId);
+        if(user.isEmpty()){
+            throw new IllegalArgumentException(String.format(
+                    "Failed to ban user '%s': User does not exist.",
+                    userId
+            ));
+        }
+
+        user.get().setBanned(true);
     }
 }
