@@ -1,6 +1,7 @@
 package com.github.ikarita.server.api;
 
 import com.github.ikarita.server.model.dto.CommunityDto;
+import com.github.ikarita.server.security.JwtUtils;
 import com.github.ikarita.server.service.CommunityService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,6 +9,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -19,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(CommunityController.class)
+@ContextConfiguration(classes = {JwtUtils.class})
 class CommunityControllerTest {
     @MockBean
     CommunityService communityService;
@@ -27,17 +30,17 @@ class CommunityControllerTest {
     MockMvc mockMvc;
 
     @Test
-    void testGetCommunitiesWithoutAuthenticationIsForbidden() throws Exception {
+    void testGetCommunitiesWithoutAuthenticationIs401() throws Exception {
         Mockito.when(communityService.getCommunities()).thenReturn(communityDtoList());
         mockMvc.perform(get("/api/v1/communities"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().is(401));
     }
 
     @Test
-    void testGetCommunityWithoutAuthenticationIsForbidden() throws Exception {
+    void testGetCommunityWithoutAuthenticationIs401() throws Exception {
         Mockito.when(communityService.getCommunities()).thenReturn(communityDtoList());
         mockMvc.perform(get("/api/v1/communities/1"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().is(401));
     }
 
     private static List<CommunityDto> communityDtoList(){

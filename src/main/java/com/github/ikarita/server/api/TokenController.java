@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TokenController {
     private final UserService userService;
+    private final JwtUtils jwtUtils;
 
     @PostMapping("/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -30,14 +31,14 @@ public class TokenController {
             }
 
             final String refresh_token = JwtUtils.extractToken(request);
-            final DecodedJWT decodedToken = JwtUtils.decodeToken(refresh_token);
+            final DecodedJWT decodedToken = jwtUtils.decodeToken(refresh_token);
             final String username = decodedToken.getSubject();
             final UserDto user = userService.getUser(username);
             final List<String> roles = user.getCommunityRoles().stream()
                     .map(CommunityRole::getName)
                     .collect(Collectors.toList());
 
-            final String access_token = JwtUtils.createAccessToken(request, username, roles);
+            final String access_token = jwtUtils.createAccessToken(request, username, roles);
 
             JwtUtils.setJwtResponse(response, access_token, refresh_token);
         }catch (Exception e){

@@ -6,14 +6,17 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,17 +26,22 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
+@Component
 public class JwtUtils {
-    //Need to review the way the secret is stored somewhere and loaded when launching the application
-    private static final Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+    @Value("${com.github.ikarita.server.security.jwtSecret}")
+    private String jwtSecret;
+    @Value("${com.github.ikarita.server.security.jwtAccessExpirationMs}")
+    private long jwtAccessExpirationMs;
+    @Value("${com.github.ikarita.server.security.jwtRefreshExpirationMs}")
+    private long jwtRefreshExpirationMs;
 
-    private JwtUtils(){}
+    private Algorithm algorithm = null;
 
     public static boolean requiresValidation(HttpServletRequest request){
         return Arrays.stream(ALLOWED_PATHS).noneMatch(s -> request.getServletPath().equals(s));
     }
 
-    public static void validateJWT(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
+    public void validateJWT(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
         try {
             if(isTokenMissing(request)){
                 throw new IllegalStateException("Missing JWT");
@@ -56,21 +64,26 @@ public class JwtUtils {
         }
     }
 
-    public static String createAccessToken(HttpServletRequest request, String username, List<String> roles){
+    public String createAccessToken(HttpServletRequest request, String username, List<String> roles){
         return JWT.create()
                 .withSubject(username)
-                .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + jwtAccessExpirationMs))
                 .withIssuer(request.getRequestURL().toString())
                 .withClaim("roles", roles)
-                .sign(algorithm);
+                .sign(algorithm());
     }
 
-    public static String createRefreshToken(HttpServletRequest request, String username){
+    public String createRefreshToken(HttpServletRequest request, String username){
         return JWT.create()
                 .withSubject(username)
-                .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + jwtRefreshExpirationMs))
                 .withIssuer(request.getRequestURL().toString())
-                .sign(algorithm);
+                .sign(algorithm());
+    }
+
+    public DecodedJWT decodeToken(String token){
+        final JWTVerifier verifier = JWT.require(algorithm()).build();
+        return verifier.verify(token);
     }
 
     public static boolean isTokenMissing(HttpServletRequest request){
@@ -80,11 +93,6 @@ public class JwtUtils {
 
     public static String extractToken(HttpServletRequest request){
         return request.getHeader(AUTHORIZATION).substring("Bearer ".length());
-    }
-
-    public static DecodedJWT decodeToken(String token){
-        final JWTVerifier verifier = JWT.require(algorithm).build();
-        return verifier.verify(token);
     }
 
     public static void setJwtResponse(HttpServletResponse response, String accessToken, String refreshToken) throws IOException {
@@ -102,5 +110,13 @@ public class JwtUtils {
         final Map<String, String> cause = new HashMap<>(1);
         cause.put("cause", message);
         new ObjectMapper().writeValue(response.getOutputStream(), cause);
+    }
+
+    private Algorithm algorithm(){
+        if(this.algorithm == null){
+            this.algorithm = Algorithm.HMAC256(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        }
+
+        return algorithm;
     }
 }

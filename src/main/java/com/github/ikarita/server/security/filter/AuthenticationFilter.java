@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
+    private final JwtUtils jwtUtils;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -42,8 +43,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
-        final String access_token = JwtUtils.createAccessToken(request, user.getUsername(), roles);
-        final String refresh_token = JwtUtils.createRefreshToken(request, user.getUsername());
+        final String access_token = jwtUtils.createAccessToken(request, user.getUsername(), roles);
+        final String refresh_token = jwtUtils.createRefreshToken(request, user.getUsername());
 
         JwtUtils.setJwtResponse(response, access_token, refresh_token);
     }
