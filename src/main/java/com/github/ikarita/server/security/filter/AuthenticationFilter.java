@@ -43,8 +43,9 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
-        final String access_token = jwtUtils.createAccessToken(request, user.getUsername(), roles);
-        final String refresh_token = jwtUtils.createRefreshToken(request, user.getUsername());
+        final String url = request.getRequestURL().toString();
+        final String access_token = jwtUtils.createAccessToken(url, user.getUsername(), roles);
+        final String refresh_token = jwtUtils.createRefreshToken(url, user.getUsername());
 
         JwtUtils.setJwtResponse(response, access_token, refresh_token);
     }

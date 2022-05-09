@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.github.ikarita.server.security.Permissions.ALLOWED_PATHS;
+import static com.github.ikarita.server.security.Permissions.ALLOWED_POST_PATHS;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -38,10 +39,18 @@ public class JwtUtils {
     private Algorithm algorithm = null;
 
     public static boolean requiresValidation(HttpServletRequest request){
-        return Arrays.stream(ALLOWED_PATHS).noneMatch(s -> request.getServletPath().equals(s));
+         if(Arrays.stream(ALLOWED_PATHS).anyMatch(s -> request.getServletPath().equals(s))){
+             return false;
+         }
+
+         if(request.getMethod().equals("POST") && Arrays.stream(ALLOWED_POST_PATHS).anyMatch(s -> request.getServletPath().equals(s))){
+             return false;
+         }
+
+         return true;
     }
 
-    public void validateJWT(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
+    public void validateJWT(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             if(isTokenMissing(request)){
                 throw new IllegalStateException("Missing JWT");
@@ -57,27 +66,26 @@ public class JwtUtils {
 
             final UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            filterChain.doFilter(request, response);
         } catch (Exception e) {
             log.error("Error when processing JWT token: [{}] {}", e.getClass().getSimpleName(), e.getMessage());
             setForbiddenResponse(response, e.getMessage());
         }
     }
 
-    public String createAccessToken(HttpServletRequest request, String username, List<String> roles){
+    public String createAccessToken(String url, String username, List<String> roles){
         return JWT.create()
                 .withSubject(username)
                 .withExpiresAt(new Date(System.currentTimeMillis() + jwtAccessExpirationMs))
-                .withIssuer(request.getRequestURL().toString())
+                .withIssuer(url)
                 .withClaim("roles", roles)
                 .sign(algorithm());
     }
 
-    public String createRefreshToken(HttpServletRequest request, String username){
+    public String createRefreshToken(String url, String username){
         return JWT.create()
                 .withSubject(username)
                 .withExpiresAt(new Date(System.currentTimeMillis() + jwtRefreshExpirationMs))
-                .withIssuer(request.getRequestURL().toString())
+                .withIssuer(url)
                 .sign(algorithm());
     }
 

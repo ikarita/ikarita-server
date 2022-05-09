@@ -1,7 +1,7 @@
 package com.github.ikarita.server.model.mappers;
 
 import com.github.ikarita.server.model.dto.UserDto;
-import com.github.ikarita.server.model.entities.User;
+import com.github.ikarita.server.model.entities.LocalUser;
 import com.github.ikarita.server.security.UserRole;
 import com.google.common.collect.Sets;
 import org.junit.jupiter.api.Test;
@@ -11,12 +11,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collections;
 
-class UserMapperTest {
+class LocalUserMapperTest {
     private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
 
     @Test
     void testUserToUserDto(){
-        final User user = new User(
+        final LocalUser localUser = new LocalUser(
                 1L,
                 "John",
                 "john@gmail.com",
@@ -26,7 +26,7 @@ class UserMapperTest {
                 false
         );
 
-        final UserDto userDto = mapper.asDto(user);
+        final UserDto userDto = mapper.asDto(localUser);
 
         assertEquals(1L, userDto.getId());
         assertEquals("John", userDto.getUsername());

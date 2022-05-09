@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
-@RequestMapping("/api/v1/communities/")
+@RequestMapping("/api/v1/communities")
 @RequiredArgsConstructor
 public class CommunityController {
     private final CommunityService communityService;
@@ -22,7 +22,7 @@ public class CommunityController {
         return ResponseEntity.ok().body(communityService.getCommunities());
     }
 
-    @GetMapping(path = "{communityId}")
+    @GetMapping(path = "/{communityId}")
     public ResponseEntity<CommunityDto> getCommunity(@PathVariable("communityId") Long communityId){
         return ResponseEntity.ok().body(communityService.getCommunity(communityId));
     }

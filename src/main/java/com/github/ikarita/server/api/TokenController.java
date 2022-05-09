@@ -38,7 +38,8 @@ public class TokenController {
                     .map(CommunityRole::getName)
                     .collect(Collectors.toList());
 
-            final String access_token = jwtUtils.createAccessToken(request, username, roles);
+            final String url = request.getRequestURL().toString();
+            final String access_token = jwtUtils.createAccessToken(url, username, roles);
 
             JwtUtils.setJwtResponse(response, access_token, refresh_token);
         }catch (Exception e){

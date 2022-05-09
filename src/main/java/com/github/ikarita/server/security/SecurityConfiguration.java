@@ -5,7 +5,6 @@ import com.github.ikarita.server.security.filter.AuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,7 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -24,10 +22,11 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final JwtUtils jwtUtils;
+    private final UserDetailsService userDetailsService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
     @Override
@@ -39,23 +38,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeHttpRequests().antMatchers(Permissions.ALLOWED_PATHS).permitAll();
-        http.authorizeHttpRequests().antMatchers(GET, "api/v1/users/**").hasAnyAuthority("ROLE_USER");
-        http.authorizeHttpRequests().antMatchers(POST, "api/v1/role/save/**").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeHttpRequests().antMatchers(POST, Permissions.ALLOWED_POST_PATHS).permitAll();
         http.authorizeHttpRequests().anyRequest().authenticated();
         http.addFilter(authenticationFilter);
         http.addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class);
-    }
-
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-    @Bean
-    @Override
-    public UserDetailsService userDetailsService() {
-        return super.userDetailsService();
     }
 
     @Bean

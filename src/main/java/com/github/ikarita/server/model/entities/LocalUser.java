@@ -13,7 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "ikarita_user")
-public class User {
+public class LocalUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,7 +25,7 @@ public class User {
     @ElementCollection
     @Enumerated(EnumType.STRING)
     private Set<UserRole> userRoles;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "localUser", cascade = CascadeType.ALL)
     private Set<CommunityUser> communities;
     @Column(columnDefinition = "boolean default false")
     private boolean isBanned;

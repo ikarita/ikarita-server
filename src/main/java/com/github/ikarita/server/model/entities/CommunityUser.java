@@ -20,7 +20,7 @@ public class CommunityUser {
 
     @ManyToOne
     @MapsId("userId")
-    private User user;
+    private LocalUser localUser;
 
     @ManyToOne
     @MapsId("communityId")

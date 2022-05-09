@@ -7,4 +7,8 @@ public class Permissions {
             "/api/v1/token/access",
             "/api/v1/token/refresh"
     };
+
+    public static final String[] ALLOWED_POST_PATHS = new String[]{
+            "/api/v1/users"
+    };
 }
