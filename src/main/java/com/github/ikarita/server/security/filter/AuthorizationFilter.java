@@ -23,7 +23,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (requiresValidation(request)) {
-            jwtUtils.validateJWT(request, response, filterChain);
+            jwtUtils.validateJWT(request, response);
         }
 
         filterChain.doFilter(request, response);
