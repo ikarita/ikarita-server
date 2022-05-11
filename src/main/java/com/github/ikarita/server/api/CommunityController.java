@@ -5,13 +5,12 @@ import com.github.ikarita.server.model.dto.NewCommunityDto;
 import com.github.ikarita.server.service.CommunityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/api/v1/communities")
 @RequiredArgsConstructor
 public class CommunityController {

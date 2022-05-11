@@ -14,14 +14,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-    private final JwtUtils jwtUtils;
+    private final TokenValidator tokenValidator;
+    private final TokenGenerator tokenGenerator;
     private final UserDetailsService userDetailsService;
 
     @Override
@@ -31,12 +32,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        final AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManagerBean(), jwtUtils);
+        final AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManagerBean(), tokenGenerator);
         authenticationFilter.setFilterProcessesUrl("/api/v1/token/access");
-        final AuthorizationFilter authorizationFilter = new AuthorizationFilter(jwtUtils);
+        final AuthorizationFilter authorizationFilter = new AuthorizationFilter(tokenValidator);
 
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
+        http.authorizeHttpRequests().antMatchers(Permissions.SWAGGER_PATHS).permitAll();
         http.authorizeHttpRequests().antMatchers(Permissions.ALLOWED_PATHS).permitAll();
         http.authorizeHttpRequests().antMatchers(POST, Permissions.ALLOWED_POST_PATHS).permitAll();
         http.authorizeHttpRequests().anyRequest().authenticated();

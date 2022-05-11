@@ -1,98 +1,19 @@
 package com.github.ikarita.server.security;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 
-import javax.servlet.FilterChain;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static com.github.ikarita.server.security.Permissions.ALLOWED_PATHS;
-import static com.github.ikarita.server.security.Permissions.ALLOWED_POST_PATHS;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@Slf4j
-@Component
 public class JwtUtils {
-    @Value("${com.github.ikarita.server.security.jwtSecret}")
-    private String jwtSecret;
-    @Value("${com.github.ikarita.server.security.jwtAccessExpirationMs}")
-    private long jwtAccessExpirationMs;
-    @Value("${com.github.ikarita.server.security.jwtRefreshExpirationMs}")
-    private long jwtRefreshExpirationMs;
-
-    private Algorithm algorithm = null;
-
-    public static boolean requiresValidation(HttpServletRequest request){
-         if(Arrays.stream(ALLOWED_PATHS).anyMatch(s -> request.getServletPath().equals(s))){
-             return false;
-         }
-
-         if(request.getMethod().equals("POST") && Arrays.stream(ALLOWED_POST_PATHS).anyMatch(s -> request.getServletPath().equals(s))){
-             return false;
-         }
-
-         return true;
-    }
-
-    public void validateJWT(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        try {
-            if(isTokenMissing(request)){
-                throw new IllegalStateException("Missing JWT");
-            }
-
-            final DecodedJWT token = decodeToken(extractToken(request));
-            final String username = token.getSubject();
-            final String[] roles = token.getClaim("roles").asArray(String.class);
-
-            final List<SimpleGrantedAuthority> authorities = Arrays.stream(roles)
-                    .map(SimpleGrantedAuthority::new)
-                    .collect(Collectors.toList());
-
-            final UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        } catch (Exception e) {
-            log.error("Error when processing JWT token: [{}] {}", e.getClass().getSimpleName(), e.getMessage());
-            setForbiddenResponse(response, e.getMessage());
-        }
-    }
-
-    public String createAccessToken(String url, String username, List<String> roles){
-        return JWT.create()
-                .withSubject(username)
-                .withExpiresAt(new Date(System.currentTimeMillis() + jwtAccessExpirationMs))
-                .withIssuer(url)
-                .withClaim("roles", roles)
-                .sign(algorithm());
-    }
-
-    public String createRefreshToken(String url, String username){
-        return JWT.create()
-                .withSubject(username)
-                .withExpiresAt(new Date(System.currentTimeMillis() + jwtRefreshExpirationMs))
-                .withIssuer(url)
-                .sign(algorithm());
-    }
-
-    public DecodedJWT decodeToken(String token){
-        final JWTVerifier verifier = JWT.require(algorithm()).build();
-        return verifier.verify(token);
-    }
+    private JwtUtils() {}
 
     public static boolean isTokenMissing(HttpServletRequest request){
         return request.getHeader(AUTHORIZATION) == null
@@ -118,13 +39,5 @@ public class JwtUtils {
         final Map<String, String> cause = new HashMap<>(1);
         cause.put("cause", message);
         new ObjectMapper().writeValue(response.getOutputStream(), cause);
-    }
-
-    private Algorithm algorithm(){
-        if(this.algorithm == null){
-            this.algorithm = Algorithm.HMAC256(jwtSecret.getBytes(StandardCharsets.UTF_8));
-        }
-
-        return algorithm;
     }
 }

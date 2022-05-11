@@ -4,13 +4,12 @@ import com.github.ikarita.server.model.dto.*;
 import com.github.ikarita.server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {

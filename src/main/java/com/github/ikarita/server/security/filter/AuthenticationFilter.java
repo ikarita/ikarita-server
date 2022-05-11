@@ -1,6 +1,7 @@
 package com.github.ikarita.server.security.filter;
 
 import com.github.ikarita.server.security.JwtUtils;
+import com.github.ikarita.server.security.TokenGenerator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
-    private final JwtUtils jwtUtils;
+    private final TokenGenerator tokenGenerator;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -44,8 +45,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .collect(Collectors.toList());
 
         final String url = request.getRequestURL().toString();
-        final String access_token = jwtUtils.createAccessToken(url, user.getUsername(), roles);
-        final String refresh_token = jwtUtils.createRefreshToken(url, user.getUsername());
+        final String access_token = tokenGenerator.createAccessToken(url, user.getUsername(), roles);
+        final String refresh_token = tokenGenerator.createRefreshToken(url, user.getUsername());
 
         JwtUtils.setJwtResponse(response, access_token, refresh_token);
     }
