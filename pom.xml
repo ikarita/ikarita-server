@@ -133,7 +133,22 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+					<jvmArguments>-Dspring.application.admin.enabled=true</jvmArguments>
 				</configuration>
+				<executions>
+					<execution>
+						<id>pre-integration-test</id>
+						<goals>
+							<goal>start</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>post-integration-test</id>
+						<goals>
+							<goal>stop</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.springdoc</groupId>
@@ -147,6 +162,10 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<apiDocsUrl>http://localhost:8080/v3/api-docs</apiDocsUrl>
+					<outputFileName>openapi.json</outputFileName>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
