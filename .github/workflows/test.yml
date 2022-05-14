@@ -46,6 +46,6 @@ jobs:
           source-directory: 'target/openapi'
           destination-github-username: 'ikarita'
           destination-repository-name: 'ikarita-server-api'
-          destination_branch: 'dev'
+          target-branch: 'dev'
           user-email: 'renaudrwemalika@gmail.com'
           user-name: 'kabinja'
