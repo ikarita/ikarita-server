@@ -20,7 +20,7 @@ public class TokenController {
     private final UserService userService;
     private final TokenValidator tokenValidator;
 
-    @PostMapping("/refresh")
+    @PostMapping(path = "/refresh", produces = "application/json")
     @Operation(
             tags = {"Token"}
     )

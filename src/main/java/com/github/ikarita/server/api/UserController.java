@@ -10,42 +10,56 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import static com.github.ikarita.server.api.ApiUtils.jsonHeader;
+
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
-    @GetMapping
+    @GetMapping(produces = "application/json")
     @Operation(
             tags = {"Users"}
     )
     public ResponseEntity<List<UserDto>> getUsers() {
-        return ResponseEntity.ok().body(userService.getUsers());
+        return ResponseEntity
+                .ok()
+                .headers(jsonHeader())
+                .body(userService.getUsers());
     }
 
-    @PostMapping
+    @PostMapping(produces = "application/json")
     @Operation(
             tags = {"Users"}
     )
     public ResponseEntity<UserDto> createUser(@RequestBody NewUserDto user){
-        return ResponseEntity.ok().body(userService.createUser(user));
+        return ResponseEntity
+                .ok()
+                .headers(jsonHeader())
+                .body(userService.createUser(user));
     }
 
-    @DeleteMapping(path = "/ban/{userId}")
+    @DeleteMapping(path = "/ban/{userId}", produces = "application/json")
     @Operation(
             tags = {"Users"}
     )
     public ResponseEntity<UserDto> banUser(HttpServletRequest request, @PathVariable("userId") Long userId){
         userService.banUser(userId);
-        return ResponseEntity.created(PathUtils.getURI(request)).build();
+        return ResponseEntity
+                .created(ApiUtils.getURI(request))
+                .headers(jsonHeader())
+                .build();
     }
 
-    @PostMapping("/roles")
+    @PostMapping(path = "/roles", produces = "application/json")
     @Operation(
             tags = {"Users"}
     )
     public ResponseEntity<UserDto> addRoleToUser(@RequestBody NewCommunityRoleForUserDto roleForUser){
-        return ResponseEntity.ok().body(userService.addRoleToUser(roleForUser));
+        return ResponseEntity
+                .ok()
+                .headers(jsonHeader())
+                .body(userService.addRoleToUser(roleForUser));
     }
 }

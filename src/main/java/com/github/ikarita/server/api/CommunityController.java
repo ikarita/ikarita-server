@@ -11,42 +11,56 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import static com.github.ikarita.server.api.ApiUtils.jsonHeader;
+
 @RestController
 @RequestMapping("/api/v1/communities")
 @RequiredArgsConstructor
 public class CommunityController {
     private final CommunityService communityService;
 
-    @GetMapping
+    @GetMapping(produces = "application/json")
     @Operation(
             tags = {"Communities"}
     )
     public ResponseEntity<List<CommunityDto>> getCommunities(){
-        return ResponseEntity.ok().body(communityService.getCommunities());
+        return ResponseEntity
+                .ok()
+                .headers(jsonHeader())
+                .body(communityService.getCommunities());
     }
 
-    @GetMapping(path = "/{communityId}")
+    @GetMapping(path = "/{communityId}", produces = "application/json")
     @Operation(
         tags = {"Communities"}
     )
     public ResponseEntity<CommunityDto> getCommunity(@PathVariable("communityId") Long communityId){
-        return ResponseEntity.ok().body(communityService.getCommunity(communityId));
+        return ResponseEntity
+                .ok()
+                .headers(jsonHeader())
+                .body(communityService.getCommunity(communityId));
     }
 
-    @PostMapping
+    @PostMapping(produces = "application/json")
     @Operation(
             tags = {"Communities"}
     )
     public ResponseEntity<CommunityDto> createCommunity(@RequestBody NewCommunityDto communityDto){
-        return ResponseEntity.ok().body(communityService.createCommunity(communityDto));
+        return ResponseEntity
+                .ok()
+                .headers(jsonHeader())
+                .body(communityService.createCommunity(communityDto));
     }
 
-    @PostMapping(path = "/deactivate/{communityId}")
+    @PostMapping(path = "/deactivate/{communityId}", produces = "application/json")
     @Operation(
             tags = {"Communities"}
     )
     public ResponseEntity<CommunityDto> deactivateCommunity(HttpServletRequest request, @PathVariable("communityId") Long communityId){
         communityService.deactivateCommunity(communityId);
-        return ResponseEntity.created(PathUtils.getURI(request)).build();
+        return ResponseEntity
+                .created(ApiUtils.getURI(request))
+                .headers(jsonHeader())
+                .build();
     }
 }

@@ -11,18 +11,23 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
+import static com.github.ikarita.server.api.ApiUtils.jsonHeader;
+
 @RestController
 @RequestMapping("/api/v1/community/roles")
 @RequiredArgsConstructor
 public class CommunityRoleController {
     private final CommunityRoleService communityRoleService;
 
-    @PutMapping
+    @PutMapping(produces = "application/json")
     @Operation(
             tags = {"Users", "Communities"}
     )
     public ResponseEntity<CommunityRoleDto> saveRole(@RequestBody NewCommunityRoleDto role){
         final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/v1/roles/save").toUriString());
-        return ResponseEntity.created(uri).body(communityRoleService.createRole(role));
+        return ResponseEntity
+                .created(uri)
+                .headers(jsonHeader())
+                .body(communityRoleService.createRole(role));
     }
 }
