@@ -6,7 +6,7 @@ on:
       - main
 jobs:
   tests:
-    name: Unit tests
+    name: Maven Verify
     runs-on: ubuntu-latest
 
     services:
@@ -37,15 +37,15 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Run Tests
-        run: mvn -B test
-      - name: Pushes Open API configuration file
-        uses: dmnemec/copy_file_to_another_repo_action@main
+        run: mvn -B verify
+      - name: Pushes OpenAPI Configuration
+        uses: cpina/github-action-push-to-another-repository@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source_file: 'target/openapi.json'
-          destination_repo: 'ikarita/ikarita-server-api'
+          source-directory: 'target/openapi'
+          destination-github-username: 'ikarita'
+          destination-repository-name: 'ikarita-server-api'
           destination_branch: 'dev'
-          user_email: 'renaudrwemalika@gmail.com'
-          user_name: 'kabinja'
-          commit_message: 'New dev version of the server API'
+          user-email: 'renaudrwemalika@gmail.com'
+          user-name: 'kabinja'
