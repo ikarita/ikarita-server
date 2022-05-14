@@ -6,10 +6,7 @@ import com.github.ikarita.server.service.CommunityRoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -20,7 +17,7 @@ import java.net.URI;
 public class CommunityRoleController {
     private final CommunityRoleService communityRoleService;
 
-    @PostMapping("/create")
+    @PutMapping
     @Operation(
             tags = {"Users", "Communities"}
     )
