@@ -2,6 +2,7 @@ package com.github.ikarita.server.api;
 
 import com.github.ikarita.server.model.dto.*;
 import com.github.ikarita.server.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,22 +17,34 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
+    @Operation(
+            tags = {"Users"}
+    )
     public ResponseEntity<List<UserDto>> getUsers() {
         return ResponseEntity.ok().body(userService.getUsers());
     }
 
     @PostMapping
+    @Operation(
+            tags = {"Users"}
+    )
     public ResponseEntity<UserDto> createUser(@RequestBody NewUserDto user){
         return ResponseEntity.ok().body(userService.createUser(user));
     }
 
     @DeleteMapping(path = "/ban/{userId}")
+    @Operation(
+            tags = {"Users"}
+    )
     public ResponseEntity<UserDto> banUser(HttpServletRequest request, @PathVariable("userId") Long userId){
         userService.banUser(userId);
         return ResponseEntity.created(PathUtils.getURI(request)).build();
     }
 
     @PostMapping("/roles")
+    @Operation(
+            tags = {"Users"}
+    )
     public ResponseEntity<UserDto> addRoleToUser(@RequestBody NewCommunityRoleForUserDto roleForUser){
         return ResponseEntity.ok().body(userService.addRoleToUser(roleForUser));
     }

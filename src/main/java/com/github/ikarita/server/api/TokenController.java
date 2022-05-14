@@ -3,6 +3,7 @@ package com.github.ikarita.server.api;
 import com.github.ikarita.server.security.JwtUtils;
 import com.github.ikarita.server.security.TokenValidator;
 import com.github.ikarita.server.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,9 @@ public class TokenController {
     private final TokenValidator tokenValidator;
 
     @PostMapping("/refresh")
+    @Operation(
+            tags = {"Token"}
+    )
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try{
             if(JwtUtils.isTokenMissing(request)){
