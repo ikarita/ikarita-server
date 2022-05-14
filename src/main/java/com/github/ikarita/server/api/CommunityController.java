@@ -21,7 +21,8 @@ public class CommunityController {
 
     @GetMapping(produces = "application/json")
     @Operation(
-            tags = {"Communities"}
+            tags = {"Communities"},
+            summary = "Fetches all communities."
     )
     public ResponseEntity<List<CommunityDto>> getCommunities(){
         return ResponseEntity
@@ -32,7 +33,8 @@ public class CommunityController {
 
     @GetMapping(path = "/{communityId}", produces = "application/json")
     @Operation(
-        tags = {"Communities"}
+            tags = {"Communities"},
+            summary = "Fetches a community by its ID."
     )
     public ResponseEntity<CommunityDto> getCommunity(@PathVariable("communityId") Long communityId){
         return ResponseEntity
@@ -43,7 +45,8 @@ public class CommunityController {
 
     @PostMapping(produces = "application/json")
     @Operation(
-            tags = {"Communities"}
+            tags = {"Communities"},
+            summary = "Creates a community."
     )
     public ResponseEntity<CommunityDto> createCommunity(@RequestBody NewCommunityDto communityDto){
         return ResponseEntity
@@ -54,7 +57,8 @@ public class CommunityController {
 
     @PostMapping(path = "/deactivate/{communityId}", produces = "application/json")
     @Operation(
-            tags = {"Communities"}
+            tags = {"Communities"},
+            summary = "Deactivates a community a community."
     )
     public ResponseEntity<CommunityDto> deactivateCommunity(HttpServletRequest request, @PathVariable("communityId") Long communityId){
         communityService.deactivateCommunity(communityId);
