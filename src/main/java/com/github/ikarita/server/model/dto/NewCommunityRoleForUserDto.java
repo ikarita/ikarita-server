@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NewCommunityRoleForUserDto {
-    private String username;
-    private String roleName;
+    private Long userId;
+    private Long roleId;
 }

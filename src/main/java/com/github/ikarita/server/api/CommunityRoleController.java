@@ -4,11 +4,14 @@ import com.github.ikarita.server.model.dto.CommunityRoleDto;
 import com.github.ikarita.server.model.dto.NewCommunityRoleDto;
 import com.github.ikarita.server.service.CommunityRoleService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 
 import static com.github.ikarita.server.api.ApiUtils.jsonHeader;
@@ -19,14 +22,23 @@ import static com.github.ikarita.server.api.ApiUtils.jsonHeader;
 public class CommunityRoleController {
     private final CommunityRoleService communityRoleService;
 
-    @PutMapping(produces = "application/json")
+    @PostMapping(produces = "application/json")
     @Operation(
-            tags = {"Users", "Communities"}
+            tags = {"Users", "Communities"},
+            summary = "Creates roles available for a community.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Definition of the new community role without its ID."
+            ),
+            responses = {
+                    @ApiResponse(
+                            description = "Community role that was created."
+                    )
+            },
+            security = {@SecurityRequirement(name = "Bearer JWT")}
     )
-    public ResponseEntity<CommunityRoleDto> saveRole(@RequestBody NewCommunityRoleDto role){
-        final URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/v1/roles/save").toUriString());
+    public ResponseEntity<CommunityRoleDto> saveRole(HttpServletRequest request, @RequestBody NewCommunityRoleDto role){
         return ResponseEntity
-                .created(uri)
+                .created(ApiUtils.getURI(request))
                 .headers(jsonHeader())
                 .body(communityRoleService.createRole(role));
     }

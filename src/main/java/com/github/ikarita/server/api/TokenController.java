@@ -22,7 +22,8 @@ public class TokenController {
 
     @PostMapping(path = "/refresh", produces = "application/json")
     @Operation(
-            tags = {"Token"}
+            tags = {"Tokens"},
+            summary = "Refreshes access token given refresh token is still valid."
     )
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try{

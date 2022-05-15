@@ -22,9 +22,8 @@ public class LocalUser {
     @Unique
     private String email;
     private String password;
-    @ElementCollection
     @Enumerated(EnumType.STRING)
-    private Set<UserRole> userRoles;
+    private UserRole userRole;
     @OneToMany(mappedBy = "localUser", cascade = CascadeType.ALL)
     private Set<CommunityUser> communities;
     @Column(columnDefinition = "boolean default false")

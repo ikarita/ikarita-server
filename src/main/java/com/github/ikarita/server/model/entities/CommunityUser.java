@@ -1,9 +1,6 @@
 package com.github.ikarita.server.model.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -16,7 +13,7 @@ import java.util.Collection;
 @Table(name = "ikarita_community_user")
 public class CommunityUser {
     @EmbeddedId
-    private CommunityUserId developerProjectId;
+    private CommunityUserId communityUserId;
 
     @ManyToOne
     @MapsId("userId")

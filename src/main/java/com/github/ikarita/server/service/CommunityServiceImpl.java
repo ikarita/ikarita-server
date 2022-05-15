@@ -44,7 +44,7 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public void deactivateCommunity(Long communityId) {
+    public CommunityDto deactivateCommunity(Long communityId) {
         final Optional<Community> community = communityRepository.findById(communityId);
         if(community.isEmpty()){
             throw new IllegalArgumentException(String.format(
@@ -53,7 +53,8 @@ public class CommunityServiceImpl implements CommunityService {
             ));
         }
 
-        community.get().setActive(true);
+        community.get().setActive(false);
+        return communityMapper.asFullDto(community.get());
     }
 
     @Override

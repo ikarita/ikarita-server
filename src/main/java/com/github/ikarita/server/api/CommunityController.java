@@ -4,6 +4,9 @@ import com.github.ikarita.server.model.dto.CommunityDto;
 import com.github.ikarita.server.model.dto.NewCommunityDto;
 import com.github.ikarita.server.service.CommunityService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,49 +25,86 @@ public class CommunityController {
     @GetMapping(produces = "application/json")
     @Operation(
             tags = {"Communities"},
-            summary = "Fetches all communities."
+            summary = "Fetches all communities.",
+            responses = {
+                    @ApiResponse(
+                            description = "List of communities."
+                    )
+            },
+            security = {@SecurityRequirement(name = "Bearer JWT")}
     )
     public ResponseEntity<List<CommunityDto>> getCommunities(){
+        List<CommunityDto> communitiesDto = communityService.getCommunities();
         return ResponseEntity
                 .ok()
                 .headers(jsonHeader())
-                .body(communityService.getCommunities());
+                .body(communitiesDto);
     }
 
     @GetMapping(path = "/{communityId}", produces = "application/json")
     @Operation(
             tags = {"Communities"},
-            summary = "Fetches a community by its ID."
+            summary = "Fetches community by its ID.",
+            parameters = {
+                    @Parameter(name = "userId", description = "ID of the community to be fetched.")
+            },
+            responses = {
+                    @ApiResponse(
+                            description = "Community corresponding to the ID."
+                    )
+            },
+            security = {@SecurityRequirement(name = "Bearer JWT")}
     )
     public ResponseEntity<CommunityDto> getCommunity(@PathVariable("communityId") Long communityId){
+        final CommunityDto communityDto = communityService.getCommunity(communityId);
         return ResponseEntity
                 .ok()
                 .headers(jsonHeader())
-                .body(communityService.getCommunity(communityId));
+                .body(communityDto);
     }
 
     @PostMapping(produces = "application/json")
     @Operation(
             tags = {"Communities"},
-            summary = "Creates a community."
+            summary = "Creates community.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Definition of the new community without its ID."
+            ),
+            responses = {
+                    @ApiResponse(
+                            description = "Community that was created."
+                    )
+            },
+            security = {@SecurityRequirement(name = "Bearer JWT")}
     )
-    public ResponseEntity<CommunityDto> createCommunity(@RequestBody NewCommunityDto communityDto){
+    public ResponseEntity<CommunityDto> createCommunity(@RequestBody NewCommunityDto newCommunityDto){
+        final CommunityDto communityDto = communityService.createCommunity(newCommunityDto);
         return ResponseEntity
                 .ok()
                 .headers(jsonHeader())
-                .body(communityService.createCommunity(communityDto));
+                .body(communityDto);
     }
 
     @PostMapping(path = "/deactivate/{communityId}", produces = "application/json")
     @Operation(
             tags = {"Communities"},
-            summary = "Deactivates a community a community."
+            summary = "Deactivates community by its ID.",
+            parameters = {
+                    @Parameter(name = "userId", description = "ID of the community to be deactivated.")
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Deactivated community."
+                    )
+            },
+            security = {@SecurityRequirement(name = "Bearer JWT")}
     )
     public ResponseEntity<CommunityDto> deactivateCommunity(HttpServletRequest request, @PathVariable("communityId") Long communityId){
-        communityService.deactivateCommunity(communityId);
+        final CommunityDto communityDto = communityService.deactivateCommunity(communityId);
         return ResponseEntity
                 .created(ApiUtils.getURI(request))
                 .headers(jsonHeader())
-                .build();
+                .body(communityDto);
     }
 }

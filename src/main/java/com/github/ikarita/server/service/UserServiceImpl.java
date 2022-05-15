@@ -1,16 +1,21 @@
 package com.github.ikarita.server.service;
 
 import com.github.ikarita.server.model.dto.*;
+import com.github.ikarita.server.model.entities.CommunityRole;
+import com.github.ikarita.server.model.entities.CommunityUser;
+import com.github.ikarita.server.model.entities.CommunityUserId;
 import com.github.ikarita.server.model.entities.LocalUser;
 import com.github.ikarita.server.model.mappers.UserMapper;
+import com.github.ikarita.server.repository.CommunityRoleRepository;
+import com.github.ikarita.server.repository.CommunityUserRepository;
 import com.github.ikarita.server.repository.UserRepository;
-import com.github.ikarita.server.security.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,6 +26,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final CommunityRoleRepository communityRoleRepository;
+    private final CommunityUserRepository communityUserRepository;
     private final UserMapper userMapper;
 
     private final PasswordEncoder passwordEncoder;
@@ -34,34 +41,43 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto addRoleToUser(NewCommunityRoleForUserDto roleForUser) {
-        final String roleName = roleForUser.getRoleName();
-        final String username = roleForUser.getUsername();
+    public UserDto addCommunityRole(NewCommunityRoleForUserDto roleForUser) {
+        final Long userId = roleForUser.getUserId();
+        final Long roleId = roleForUser.getRoleId();
 
-        log.info("Adding role {} to user {}", roleName, username);
-        final Optional<LocalUser> user = userRepository.findByUsername(username);
+        log.info("Adding role {} to user {}", userId, roleId);
+        final Optional<LocalUser> user = userRepository.findById(userId);
         if(user.isEmpty()){
             throw new IllegalArgumentException(String.format(
                     "Failed to add role '%s' to user '%s': User does not exist.",
-                    roleName,
-                    username
+                    roleId,
+                    userId
             ));
         }
 
-        UserRole userRole;
-
-        try {
-            userRole = UserRole.valueOf(roleName);
-        }
-        catch (Exception e){
+        final Optional<CommunityRole> role = communityRoleRepository.findById(userId);
+        if(role.isEmpty()){
             throw new IllegalArgumentException(String.format(
-                    "Failed to add role '%s' to user '%s': Role does not exist.",
-                    roleName,
-                    username
+                    "Failed to add role '%s' to user '%s': Community role does not exist.",
+                    roleId,
+                    userId
             ));
         }
 
-        user.get().getUserRoles().add(userRole);
+        final CommunityUser communityUser = communityUserRepository.findByLocalUserAndCommunity(user.get(), role.get().getCommunity())
+                .orElseGet(() ->{
+                    CommunityUser c = new CommunityUser(
+                            new CommunityUserId(user.get().getId(), role.get().getCommunity().getId()),
+                            user.get(),
+                            role.get().getCommunity(),
+                            new ArrayList<>()
+                    );
+                    return communityUserRepository.save(c);
+                });
+
+        communityUser.getCommunityRoles().add(role.get());
+        user.get().getCommunities().add(communityUser);
+
         return userMapper.asDto(user.get());
     }
 
@@ -88,7 +104,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void banUser(Long userId) {
+    public UserDto banUser(Long userId) {
         final Optional<LocalUser> user = userRepository.findById(userId);
         if(user.isEmpty()){
             throw new IllegalArgumentException(String.format(
@@ -98,5 +114,6 @@ public class UserServiceImpl implements UserService {
         }
 
         user.get().setBanned(true);
+        return userMapper.asDto(user.get());
     }
 }

@@ -2,11 +2,11 @@ package com.github.ikarita.server.security;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.github.ikarita.server.model.dto.UserDto;
-import com.github.ikarita.server.model.entities.CommunityRole;
 import com.github.ikarita.server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -48,8 +48,8 @@ public class TokenValidator {
         final DecodedJWT decodedToken = jwtAlgorithm.decodeToken(refresh_token);
         final String username = decodedToken.getSubject();
         final UserDto user = userService.getUser(username);
-        final List<String> roles = user.getCommunityRoles().stream()
-                .map(CommunityRole::getName)
+        final List<String> roles = user.getUserRole().getGrantedAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
         final String url = request.getRequestURL().toString();

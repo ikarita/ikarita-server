@@ -10,7 +10,7 @@ public interface CommunityService {
 
     CommunityDto getCommunity(Long communityId);
 
-    void deactivateCommunity(Long communityId);
+    CommunityDto deactivateCommunity(Long communityId);
 
     List<CommunityDto> getCommunities();
 }

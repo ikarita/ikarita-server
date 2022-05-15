@@ -4,16 +4,14 @@ import com.github.ikarita.server.model.entities.LocalUser;
 import com.github.ikarita.server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,14 +32,10 @@ public class LocalUserDetailsService implements UserDetailsService {
 
         log.info("User '{}' found", username);
 
-        final List<SimpleGrantedAuthority> authorities = user.get().getUserRoles().stream()
-                .map(r -> new SimpleGrantedAuthority(r.name()))
-                .collect(Collectors.toList());
-
-        return new org.springframework.security.core.userdetails.User(
-                user.get().getUsername(),
-                user.get().getPassword(),
-                authorities
-        );
+        return User.builder()
+                .username(user.get().getUsername())
+                .password(user.get().getPassword())
+                .authorities(user.get().getUserRole().getGrantedAuthorities())
+                .build();
     }
 }

@@ -21,7 +21,7 @@ class LocalUserMapperTest {
                 "John",
                 "john@gmail.com",
                 "secret",
-                Sets.newHashSet(UserRole.VIEWER),
+                UserRole.VIEWER,
                 Collections.emptySet(),
                 false
         );
@@ -31,7 +31,6 @@ class LocalUserMapperTest {
         assertEquals(1L, userDto.getId());
         assertEquals("John", userDto.getUsername());
         assertEquals("john@gmail.com", userDto.getEmail());
-        assertEquals(1, userDto.getUserRoles().size());
-        assertEquals(UserRole.VIEWER, userDto.getUserRoles().stream().iterator().next());
+        assertEquals(UserRole.VIEWER, userDto.getUserRole());
     }
 }

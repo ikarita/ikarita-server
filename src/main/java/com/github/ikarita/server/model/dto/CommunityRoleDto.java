@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class CommunityRoleDto {
     private Long id;
     private String name;
+    private CommunityDto community;
 }
