@@ -1,10 +1,13 @@
 package com.github.ikarita.server.security.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.ikarita.server.model.dto.UserLoginDto;
 import com.github.ikarita.server.security.JwtUtils;
 import com.github.ikarita.server.security.TokenGenerator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -27,11 +30,20 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        final String username = request.getParameter("username");
-        final String password = request.getParameter("password");
+        String username;
+        String password;
+
+        try {
+            final ObjectMapper mapper = new ObjectMapper();
+            final UserLoginDto userLogin = mapper.readValue(request.getInputStream(), UserLoginDto.class);
+
+            username = userLogin.getUsername();
+            password = userLogin.getPassword();
+        } catch (IOException e) {
+            throw new BadCredentialsException(e.getMessage());
+        }
+
         final UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
-
-
         log.info("Authentication attempt with username '{}' and password '{}'", username, password);
 
         return authenticationManager.authenticate(authenticationToken);

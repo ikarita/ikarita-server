@@ -8,7 +8,7 @@ import lombok.Getter;
 public enum UserPermission {
     USER_READ("user:read"),
     USER_RESTRICT("user:restrict"),
-    USER_DELETE("user:delete"),
+    USER_BAN("user:ban"),
     COMMUNITY_READ("community:read"),
     COMMUNITY_ADD("community:add"),
     COMMUNITY_DELETE("community:delete");

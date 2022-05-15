@@ -3,7 +3,6 @@ package com.github.ikarita.server.security;
 import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Set;
@@ -17,7 +16,7 @@ public enum UserRole {
     VIEWER(Sets.newHashSet(COMMUNITY_READ)),
     CONTRIBUTOR(Sets.newHashSet(COMMUNITY_READ, COMMUNITY_ADD)),
     MODERATOR(Sets.newHashSet(COMMUNITY_READ, USER_READ, USER_RESTRICT)),
-    ADMIN(Sets.newHashSet(COMMUNITY_READ, USER_READ, USER_DELETE, COMMUNITY_DELETE));
+    ADMIN(Sets.newHashSet(COMMUNITY_READ, USER_READ, USER_BAN, COMMUNITY_DELETE));
 
     private final Set<UserPermission> permissions;
 
