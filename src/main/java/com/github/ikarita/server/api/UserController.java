@@ -71,7 +71,7 @@ public class UserController {
             responses = {
                     @ApiResponse(
                             responseCode = "201",
-                            description = "User is banned from the platform."
+                            description = "User that is banned from the platform."
                     )
             },
             security = {@SecurityRequirement(name = "Bearer JWT")}
