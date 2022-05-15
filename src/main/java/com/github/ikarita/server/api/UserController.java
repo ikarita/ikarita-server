@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,7 @@ import static com.github.ikarita.server.api.ApiUtils.jsonHeader;
 public class UserController {
     private final UserService userService;
 
+    @PreAuthorize("hasAuthority('user:list')")
     @GetMapping(produces = "application/json")
     @Operation(
             tags = {"Users"},
@@ -61,6 +63,7 @@ public class UserController {
                 .body(userDto);
     }
 
+    @PreAuthorize("hasAuthority('user:ban')")
     @DeleteMapping(path = "/ban/{userId}", produces = "application/json")
     @Operation(
             tags = {"Users"},
@@ -84,9 +87,10 @@ public class UserController {
                 .body(userDto);
     }
 
-    @PutMapping(path = "/roles", produces = "application/json")
+    @PreAuthorize("@communitySecurityService.hasAuthority(#roleForUser.getCommunityId(), 'user:role')")
+    @PostMapping(path = "communities/roles", produces = "application/json")
     @Operation(
-            tags = {"Users"},
+            tags = {"Users", "Communities"},
             summary = "Assigns community role to user within a community.",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "IDs of the user and the community role to be assigned to it."

@@ -15,8 +15,8 @@ import static com.github.ikarita.server.security.UserPermission.*;
 public enum UserRole {
     VIEWER(Sets.newHashSet(COMMUNITY_READ)),
     CONTRIBUTOR(Sets.newHashSet(COMMUNITY_READ, COMMUNITY_ADD)),
-    MODERATOR(Sets.newHashSet(COMMUNITY_READ, USER_READ, USER_RESTRICT)),
-    ADMIN(Sets.newHashSet(COMMUNITY_READ, USER_READ, USER_BAN, COMMUNITY_DELETE));
+    MODERATOR(Sets.newHashSet(COMMUNITY_READ, USER_LIST, USER_RESTRICT)),
+    ADMIN(Sets.newHashSet(COMMUNITY_READ, USER_LIST, USER_BAN, COMMUNITY_DELETE));
 
     private final Set<UserPermission> permissions;
 

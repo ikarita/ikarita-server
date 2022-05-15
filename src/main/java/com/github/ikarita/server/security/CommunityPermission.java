@@ -12,7 +12,7 @@ public enum CommunityPermission {
     DATA_DELETE("data:delete"),
     USER_READ("user:read"),
     USER_ADD("user:add"),
-    USER_EDIT("user:edit"),
+    USER_ROLE("user:role"),
     USER_DELETE("user:delete");
 
     private final String permission;

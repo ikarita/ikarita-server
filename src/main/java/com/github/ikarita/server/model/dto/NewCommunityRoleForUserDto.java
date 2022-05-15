@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class NewCommunityRoleForUserDto {
     private Long userId;
     private Long roleId;
+    private Long communityId;
 }

@@ -6,7 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum UserPermission {
-    USER_READ("user:read"),
+    USER_LIST("user:list"),
     USER_RESTRICT("user:restrict"),
     USER_BAN("user:ban"),
     COMMUNITY_READ("community:read"),

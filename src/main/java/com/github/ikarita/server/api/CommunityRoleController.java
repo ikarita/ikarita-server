@@ -9,10 +9,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
 
 import static com.github.ikarita.server.api.ApiUtils.jsonHeader;
 
@@ -24,7 +22,7 @@ public class CommunityRoleController {
 
     @PostMapping(produces = "application/json")
     @Operation(
-            tags = {"Users", "Communities"},
+            tags = {"Communities"},
             summary = "Creates roles available for a community.",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Definition of the new community role without its ID."
