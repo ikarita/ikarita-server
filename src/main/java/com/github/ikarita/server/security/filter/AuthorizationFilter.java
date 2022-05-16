@@ -20,10 +20,14 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        boolean isValid = true;
+
         if (tokenValidator.requiresValidation(request)) {
-            tokenValidator.access(request, response);
+            isValid = tokenValidator.access(request, response);
         }
 
-        filterChain.doFilter(request, response);
+        if(isValid){
+            filterChain.doFilter(request, response);
+        }
     }
 }

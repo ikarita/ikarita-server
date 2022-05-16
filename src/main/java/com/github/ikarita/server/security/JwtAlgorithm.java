@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 
 @Component
-class JwtAlgorithm {
+public class JwtAlgorithm {
     @Value("${com.github.ikarita.server.security.jwtSecret}")
     private String jwtSecret;
 

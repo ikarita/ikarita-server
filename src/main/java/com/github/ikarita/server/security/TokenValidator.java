@@ -58,12 +58,13 @@ public class TokenValidator {
         JwtUtils.setJwtResponse(response, access_token, refresh_token);
     }
 
-    public void access(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        try {
-            if(JwtUtils.isTokenMissing(request)){
-                throw new IllegalStateException("Missing JWT");
-            }
+    public boolean access(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if(JwtUtils.isTokenMissing(request)){
+            JwtUtils.setUnauthorizedResponse(response, "No bearer token passed in request.");
+            return false;
+        }
 
+        try {
             final DecodedJWT token = jwtAlgorithm.decodeToken(JwtUtils.extractToken(request));
             final String username = token.getSubject();
             final String[] roles = token.getClaim("roles").asArray(String.class);
@@ -77,7 +78,10 @@ public class TokenValidator {
         } catch (Exception e) {
             log.error("Error when processing JWT token: [{}] {}", e.getClass().getSimpleName(), e.getMessage());
             JwtUtils.setForbiddenResponse(response, e.getMessage());
+            return false;
         }
+
+        return true;
     }
 
     private static boolean checkPath(String path, String pattern){
