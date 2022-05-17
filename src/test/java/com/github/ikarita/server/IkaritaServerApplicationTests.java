@@ -29,5 +29,4 @@ class IkaritaServerApplicationTests {
 		assertNotNull(tokenController);
 		assertNotNull(userController);
 	}
-
 }

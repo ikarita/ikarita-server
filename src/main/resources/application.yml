@@ -1,0 +1,29 @@
+spring:
+  main:
+    banner-mode: off
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:5432/ikarita
+    username: ikarita
+    password: ikarita
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+        format_sql: true
+    show-sql: false
+
+com:
+  github:
+    ikarita:
+      server:
+        security:
+          jwtSecret: some_secret
+          jwtAccessExpirationMs: 3600000
+          jwtRefreshExpirationMs: 8640000000
+
+springdoc:
+  swagger-ui:
+    enabled: true
