@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -63,6 +64,7 @@ public class CommunityController {
                 .body(communityDto);
     }
 
+    @PreAuthorize("hasAuthority('community:create')")
     @PostMapping(produces = "application/json")
     @Operation(
             tags = {"Communities"},
@@ -77,10 +79,10 @@ public class CommunityController {
             },
             security = {@SecurityRequirement(name = "Bearer JWT")}
     )
-    public ResponseEntity<CommunityDto> createCommunity(@RequestBody NewCommunityDto newCommunityDto){
+    public ResponseEntity<CommunityDto> createCommunity(HttpServletRequest request, @RequestBody NewCommunityDto newCommunityDto){
         final CommunityDto communityDto = communityService.createCommunity(newCommunityDto);
         return ResponseEntity
-                .ok()
+                .created(ApiUtils.getURI(request))
                 .headers(jsonHeader())
                 .body(communityDto);
     }

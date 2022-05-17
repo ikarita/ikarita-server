@@ -1,42 +1,24 @@
 package com.github.ikarita.server.api;
 
-import com.github.ikarita.server.model.dto.CommunityDto;import java.rmi.ServerException;
-import com.github.ikarita.server.security.*;
+import com.github.ikarita.server.model.dto.CommunityDto;
+import com.github.ikarita.server.model.dto.NewCommunityDto;
 import com.github.ikarita.server.service.CommunityService;
-import com.github.ikarita.server.service.LocalUserDetailsService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.http.MediaType;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = CommunityController.class)
 @Import(CommunityController.class)
-@ContextConfiguration(classes = {SecurityConfiguration.class, TokenGenerator.class, TokenValidator.class, JwtAlgorithm.class})
-class CommunityControllerTest {
+class CommunityControllerTest extends AbstractControllerTest {
     @MockBean
     private CommunityService communityService;
-
-    @MockBean
-    private LocalUserDetailsService userDetailsService;
-
-    @Autowired
-    MockMvc mockMvc;
-
-    @Autowired
-    TokenGenerator tokenGenerator;
 
     @Test
     void testGetCommunitiesWithoutAuthenticationIsUnauthorized() throws Exception {
@@ -50,29 +32,46 @@ class CommunityControllerTest {
     }
 
     @Test
-    void testGetCommunitiesWithAuthenticationIsUnauthorized() throws Exception {
-        final User user = new User("user", "user@gmail.com", Collections.emptySet());
-        final String tokenValue = "Bearer " + tokenGenerator.createAccessToken("test.com", user.getUsername(), Collections.emptyList());
+    void testGetCommunitiesWithAuthenticationIsOk() throws Exception {
+        final CommunityDto community1 = new CommunityDto(1L, "Community 1", true);
+        final CommunityDto community2 = new CommunityDto(2L, "Community 2", true);
 
-        Mockito.when(userDetailsService.loadUserByUsername(anyString())).thenReturn(user);
-        Mockito.when(communityService.getCommunities()).thenReturn(communityDtoList());
-
-        mockMvc.perform(get("/api/v1/communities").header("Authorization", tokenValue)).andExpect(status().isOk());
+        Mockito.when(communityService.getCommunities()).thenReturn(Arrays.asList(community1, community2));
+        performAuthenticated(get("/api/v1/communities"), admin())
+                .andExpect(status().isOk());
     }
 
-    private static List<CommunityDto> communityDtoList(){
-        final CommunityDto community1 = new CommunityDto(
-                1L,
-                "Community 1",
-                true
-        );
+    @Test
+    void testPostCommunityWithViewerIsForbidden() throws Exception {
+        final NewCommunityDto newCommunityDto = new NewCommunityDto("Community 1", true);
 
-        final CommunityDto community2 = new CommunityDto(
-                2L,
-                "Community 2",
-                true
-        );
+        performAuthenticated(post("/api/v1/communities").contentType(MediaType.APPLICATION_JSON).content(toJson(newCommunityDto)), viewer())
+                .andExpect(status().isForbidden());
+    }
 
-        return Arrays.asList(community1, community2);
+    @Test
+    void testPostCommunityWithModeratorIsForbidden() throws Exception {
+        final NewCommunityDto newCommunityDto = new NewCommunityDto("Community 1", true);
+
+        performAuthenticated(post("/api/v1/communities").contentType(MediaType.APPLICATION_JSON).content(toJson(newCommunityDto)), moderator())
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void testPostCommunityWithContributorIsForbidden() throws Exception {
+        final NewCommunityDto newCommunityDto = new NewCommunityDto("Community 1", true);
+
+        performAuthenticated(post("/api/v1/communities").contentType(MediaType.APPLICATION_JSON).content(toJson(newCommunityDto)), contributor())
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void testPostCommunityWithAuthenticationIsOk() throws Exception {
+        final NewCommunityDto newCommunityDto = new NewCommunityDto("Community 1", true);
+        final CommunityDto communityDto = new CommunityDto(1L, "Community 1", true);
+
+        Mockito.when(communityService.createCommunity(any())).thenReturn(communityDto);
+        performAuthenticated(post("/api/v1/communities").contentType(MediaType.APPLICATION_JSON).content(toJson(newCommunityDto)), admin())
+                .andExpect(status().isCreated());
     }
 }

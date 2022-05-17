@@ -20,12 +20,12 @@ public class TokenGenerator {
 
     private final JwtAlgorithm jwtAlgorithm;
 
-    public String createAccessToken(String url, String username, List<String> roles){
+    public String createAccessToken(String url, String username, List<String> authorities){
         return JWT.create()
                 .withSubject(username)
                 .withExpiresAt(new Date(System.currentTimeMillis() + jwtAccessExpirationMs))
                 .withIssuer(url)
-                .withClaim("roles", roles)
+                .withClaim("roles", authorities)
                 .sign(jwtAlgorithm.algorithm());
     }
 

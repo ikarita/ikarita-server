@@ -10,8 +10,6 @@ public enum UserPermission {
     USER_RESTRICT("user:restrict"),
     USER_BAN("user:ban"),
     COMMUNITY_READ("community:read"),
-    COMMUNITY_ADD("community:add"),
-    COMMUNITY_DELETE("community:delete");
-
+    COMMUNITY_CREATE("community:create");
     private final String permission;
 }
