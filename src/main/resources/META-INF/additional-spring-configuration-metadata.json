@@ -7,12 +7,12 @@
     },
     {
       "name": "com.github.ikarita.server.security.jwtAccessExpirationMs",
-      "type": "java.lang.Integer",
+      "type": "java.lang.Long",
       "description": "Access JWT time to live in milliseconds."
     },
     {
       "name": "com.github.ikarita.server.security.jwtRefreshExpirationMs",
-      "type": "java.lang.Integer",
+      "type": "java.lang.Long",
       "description": "Refresh JWT time to live in millisecondss."
     }
   ]

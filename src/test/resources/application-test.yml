@@ -1,0 +1,20 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        default_schema: public
+  test:
+    database:
+      replace: none
+  liquibase:
+    change-log: classpath:liquidbase/changelog_master.xml
+    contexts: test
+
+server:
+  friendlyName: Test Server
+
+logging:
+  level:
+    liquidbase: INFO

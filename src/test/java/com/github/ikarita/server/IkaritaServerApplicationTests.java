@@ -10,9 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-class IkaritaServerApplicationTests {
-
+class IkaritaServerApplicationTests extends AbstractIntegrationTest {
 	@Autowired
 	CommunityController communityController;
 	@Autowired
