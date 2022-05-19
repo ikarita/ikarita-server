@@ -17,4 +17,4 @@ server:
 
 logging:
   level:
-    liquidbase: INFO
+    liquid-base: INFO
