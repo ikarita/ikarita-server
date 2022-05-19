@@ -1,12 +1,11 @@
 package com.github.ikarita.server;
 
-import com.github.ikarita.server.api.CommunityController;
-import com.github.ikarita.server.api.CommunityRoleController;
-import com.github.ikarita.server.api.TokenController;
-import com.github.ikarita.server.api.UserController;
+import com.github.ikarita.server.api.community.CommunityController;
+import com.github.ikarita.server.api.community.CommunityRoleController;
+import com.github.ikarita.server.api.user.TokenController;
+import com.github.ikarita.server.api.user.UserController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 

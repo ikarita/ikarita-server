@@ -1,7 +1,11 @@
 package com.github.ikarita.server.api;
 
 import com.github.ikarita.server.security.*;
-import com.github.ikarita.server.service.LocalUserDetailsService;
+import com.github.ikarita.server.security.jwt.JwtAlgorithm;
+import com.github.ikarita.server.security.jwt.JwtGenerator;
+import com.github.ikarita.server.security.jwt.JwtValidator;
+import com.github.ikarita.server.security.permissions.UserRole;
+import com.github.ikarita.server.service.user.LocalUserDetailsService;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -16,7 +20,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,14 +27,14 @@ import java.util.stream.Collectors;
 import static org.mockito.ArgumentMatchers.anyString;
 
 @WebMvcTest
-@ContextConfiguration(classes = {SecurityConfiguration.class, TokenGenerator.class, TokenValidator.class, JwtAlgorithm.class})
+@ContextConfiguration(classes = {SecurityConfiguration.class, JwtGenerator.class, JwtValidator.class, JwtAlgorithm.class})
 public abstract class AbstractControllerTest {
 
     @Autowired
     protected MockMvc mockMvc;
 
     @Autowired
-    protected TokenGenerator tokenGenerator;
+    protected JwtGenerator jwtGenerator;
 
     @MockBean
     private LocalUserDetailsService userDetailsService;
@@ -41,7 +44,7 @@ public abstract class AbstractControllerTest {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
-        final String token = "Bearer " + tokenGenerator.createAccessToken("test.com", user.getUsername(), authorities);
+        final String token = "Bearer " + jwtGenerator.createAccessToken("test.com", user.getUsername(), authorities);
         Mockito.when(userDetailsService.loadUserByUsername(anyString())).thenReturn(user);
 
         return token;

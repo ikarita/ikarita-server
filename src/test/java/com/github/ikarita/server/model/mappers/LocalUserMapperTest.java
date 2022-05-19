@@ -1,9 +1,8 @@
 package com.github.ikarita.server.model.mappers;
 
-import com.github.ikarita.server.model.dto.UserDto;
-import com.github.ikarita.server.model.entities.LocalUser;
-import com.github.ikarita.server.security.UserRole;
-import com.google.common.collect.Sets;
+import com.github.ikarita.server.model.dto.user.UserDto;
+import com.github.ikarita.server.model.entities.user.LocalUser;
+import com.github.ikarita.server.security.permissions.UserRole;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 

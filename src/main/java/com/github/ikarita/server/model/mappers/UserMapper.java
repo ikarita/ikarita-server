@@ -1,8 +1,8 @@
 package com.github.ikarita.server.model.mappers;
 
-import com.github.ikarita.server.model.dto.NewUserDto;
-import com.github.ikarita.server.model.dto.UserDto;
-import com.github.ikarita.server.model.entities.LocalUser;
+import com.github.ikarita.server.model.dto.user.NewUserDto;
+import com.github.ikarita.server.model.dto.user.UserDto;
+import com.github.ikarita.server.model.entities.user.LocalUser;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

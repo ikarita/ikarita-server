@@ -1,6 +1,6 @@
 package com.github.ikarita.server.security.filter;
 
-import com.github.ikarita.server.security.TokenValidator;
+import com.github.ikarita.server.security.jwt.JwtValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -16,14 +16,14 @@ import java.io.IOException;
 @AllArgsConstructor
 @Component
 public class AuthorizationFilter extends OncePerRequestFilter {
-    private final TokenValidator tokenValidator;
+    private final JwtValidator jwtValidator;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         boolean isValid = true;
 
-        if (tokenValidator.requiresValidation(request)) {
-            isValid = tokenValidator.access(request, response);
+        if (jwtValidator.requiresValidation(request)) {
+            isValid = jwtValidator.access(request, response);
         }
 
         if(isValid){

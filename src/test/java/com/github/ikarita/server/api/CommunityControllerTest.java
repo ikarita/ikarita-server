@@ -1,8 +1,9 @@
 package com.github.ikarita.server.api;
 
-import com.github.ikarita.server.model.dto.CommunityDto;
-import com.github.ikarita.server.model.dto.NewCommunityDto;
-import com.github.ikarita.server.service.CommunityService;
+import com.github.ikarita.server.api.community.CommunityController;
+import com.github.ikarita.server.model.dto.community.CommunityDto;
+import com.github.ikarita.server.model.dto.community.NewCommunityDto;
+import com.github.ikarita.server.service.community.CommunityService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
