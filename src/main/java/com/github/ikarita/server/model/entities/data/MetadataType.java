@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "ikarita_data_type")
-public class DataType {
+public class MetadataType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,13 +22,13 @@ public class DataType {
     private String description;
 
     @OneToMany(mappedBy = "parent")
-    private List<DataType> dataTypes;
+    private List<MetadataType> metadataTypes;
 
     @ManyToOne
-    private DataType parent;
+    private MetadataType parent;
 
     @ManyToMany
-    private List<DataConstraint> dataConstraints;
+    private List<MetadataConstraint> metadataConstraints;
 
 
 }

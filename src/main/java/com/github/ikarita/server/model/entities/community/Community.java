@@ -1,7 +1,7 @@
 package com.github.ikarita.server.model.entities.community;
 
-import com.github.ikarita.server.model.entities.data.DataType;
-import com.github.ikarita.server.model.entities.data.GeoPoint;
+import com.github.ikarita.server.model.entities.data.MetadataType;
+import com.github.ikarita.server.model.entities.data.DataPoint;
 import com.github.ikarita.server.model.entities.user.CommunityUser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,8 +39,8 @@ public class Community {
     private Set<CommunityUser> users;
 
     @OneToMany(mappedBy = "community")
-    private List<GeoPoint> geoPoints;
+    private List<DataPoint> dataPoints;
 
     @ManyToOne
-    private DataType dataType;
+    private MetadataType metadataType;
 }

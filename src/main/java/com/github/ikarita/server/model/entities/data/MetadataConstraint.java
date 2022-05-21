@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "ikarita_data_constraint")
-public class DataConstraint {
+public class MetadataConstraint {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

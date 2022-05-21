@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -15,19 +16,19 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "ikarita_geo_point")
-public class GeoPoint {
+@Table(name = "ikarita_data_point")
+public class DataPoint {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private Float north;
+    private Float longitude;
 
-    private Float east;
+    private Float latitude;
 
     @Enumerated(EnumType.STRING)
-    private GeoPointStatus status;
+    private DataPointStatus status;
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -36,5 +37,8 @@ public class GeoPoint {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private LocalUser localUser;
+
+    @Column(name = "creation_date")
+    private LocalDateTime creationDate;
 
 }

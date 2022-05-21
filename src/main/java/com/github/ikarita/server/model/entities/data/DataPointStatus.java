@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum GeoPointStatus {
+public enum DataPointStatus {
     SUBMITTED("submitted"),
     ACCEPTED("accepted"),
     DELETED("deleted");
