@@ -1,11 +1,15 @@
 package com.github.ikarita.server.model.entities.data;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.github.ikarita.server.model.entities.AbstractIkaritaEntity;
 import com.github.ikarita.server.model.entities.community.Community;
 import com.github.ikarita.server.model.entities.user.LocalUser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
+import org.locationtech.jts.geom.Point;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,18 +21,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "ikarita_data_point")
-public class DataPoint {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    private Float longitude;
-
-    private Float latitude;
-
+public class DataPoint extends AbstractIkaritaEntity {
     @Enumerated(EnumType.STRING)
-    private DataPointStatus status;
+    private FeatureStatus status;
+
+    @Column(columnDefinition = "geography")
+    private Point coordinates;
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -41,4 +39,8 @@ public class DataPoint {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
+    @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
+    @Basic(fetch = FetchType.LAZY)
+    private JsonNode metadata;
 }

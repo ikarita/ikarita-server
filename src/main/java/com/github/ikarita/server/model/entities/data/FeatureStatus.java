@@ -5,10 +5,10 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum DataValidationOperation {
+public enum FeatureStatus {
     SUBMITTED("submitted"),
     ACCEPTED("accepted"),
     DELETED("deleted");
 
-    private final String operation;
+    private final String status;
 }

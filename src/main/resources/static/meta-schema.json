@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "$ref": "#/$defs/uri"
+    },
+    "$id": {
+      "$ref": "#/$defs/uri"
+    },
+    "definition": {
+      "type": "string"
+    },
+    "type": {
+      "const": "object"
+    },
+    "properties": {
+      "description": "Validates string related attributes",
+      "type": "object",
+      "properties": {
+        "enum": [
+          {
+            "$ref": "#/$defs/string-schema"
+          },
+          {
+            "$ref": "#/$defs/boolean-schema"
+          },
+          {
+            "$ref": "#/$defs/number-schema"
+          },
+          {
+            "$ref": "#/$defs/choice-schema"
+          },
+          {
+            "$ref": "#/$defs/group-schema"
+          }
+        ]
+      },
+      "propertyNames": {
+        "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+      }
+    }
+  },
+  "required": [
+    "$schema",
+    "type"
+  ],
+  "$defs": {
+    "uri": {
+      "type": "string",
+      "format": "uri"
+    },
+    "string-schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "string"
+        },
+        "minLength": "integer",
+        "maxLength": "integer",
+        "pattern": "string",
+        "format": {
+          "enum": [
+            "date-time",
+            "time",
+            "date",
+            "duration",
+            "email",
+            "idn-email",
+            "hostname",
+            "idn-hostname",
+            "ipv4",
+            "ipv6",
+            "uuid",
+            "uri",
+            "uri-reference",
+            "iri",
+            "iri-reference",
+            "uri-template",
+            "json-pointer",
+            "relative-json-pointer",
+            "regex"
+          ]
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "boolean-schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "boolean"
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "number-schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "integer",
+            "number"
+          ]
+        },
+        "multipleOf": "integer",
+        "minimum": "number",
+        "exclusiveMinimum": "number",
+        "maximum": "number",
+        "exclusiveMaximum": "number"
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "choice-schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "array"
+        }
+      },
+      "required": [
+        "type"
+      ]
+    },
+    "group-schema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "object"
+        }
+      },
+      "required": [
+        "type"
+      ]
+    }
+  }
+}

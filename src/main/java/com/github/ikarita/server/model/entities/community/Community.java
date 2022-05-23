@@ -1,6 +1,5 @@
 package com.github.ikarita.server.model.entities.community;
 
-import com.github.ikarita.server.model.entities.data.MetadataType;
 import com.github.ikarita.server.model.entities.data.DataPoint;
 import com.github.ikarita.server.model.entities.user.CommunityUser;
 import lombok.AllArgsConstructor;
@@ -8,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.checkerframework.common.aliasing.qual.Unique;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.List;
@@ -39,8 +39,8 @@ public class Community {
     private Set<CommunityUser> users;
 
     @OneToMany(mappedBy = "community")
-    private List<DataPoint> dataPoints;
+    private List<DataPoint> geoData;
 
-    @ManyToOne
-    private MetadataType metadataType;
+    @Type(type = "jsonb")
+    private Object metadataSchema;
 }
