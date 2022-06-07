@@ -9,11 +9,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
-import org.locationtech.jts.geom.Point;
+//import org.locationtech.jts.geom.Point;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-
 
 @Entity
 @Getter
@@ -25,8 +24,8 @@ public class DataPoint extends AbstractIkaritaEntity {
     @Enumerated(EnumType.STRING)
     private FeatureStatus status;
 
-    @Column(columnDefinition = "geography")
-    private Point coordinates;
+    //@Column(columnDefinition = "geography")
+    //private Point coordinates;
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)

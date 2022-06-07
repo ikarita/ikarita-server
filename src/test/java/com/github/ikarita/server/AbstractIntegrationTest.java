@@ -17,7 +17,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @ContextConfiguration(initializers = AbstractIntegrationTest.DataSourceInitializer.class)
 @Testcontainers
 public abstract class AbstractIntegrationTest {
-    public static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:9.4");
+    public static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:14.2");
 
     static {
         container.start();
