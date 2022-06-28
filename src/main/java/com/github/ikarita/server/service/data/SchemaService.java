@@ -7,4 +7,6 @@ import java.util.Set;
 
 public interface SchemaService {
     Set<ValidationMessage> validate(String schema) throws JsonProcessingException;
+
+    Set<ValidationMessage> validate(String schema,String object) throws  JsonProcessingException;
 }

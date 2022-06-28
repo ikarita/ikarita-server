@@ -88,4 +88,41 @@ class SchemaServiceTest {
         assertEquals(1, errors.size());
         assertTrue(errors.iterator().next().getMessage().startsWith("$.type: must be a constant value object"));
     }
+
+    @Test
+    void testSimpleSchema() throws JsonProcessingException {
+        final String simpleSchema = "{\n" +
+                "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
+                "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
+                "    \"type\": \"object\",\n" +
+                "    \"properties\": {\n"+
+                "        \"free\": { \n" +
+                "            \"type\" :\"boolean\"\n" +
+                "        }\n"+
+                "    }\n"+
+                "}";
+
+        final Set<ValidationMessage> errors = schemaService.validate(simpleSchema);
+        assertEquals(0, errors.size());
+    }
+    @Test
+    void testSimpleSchemaObject() throws JsonProcessingException {
+        final String simpleSchema = "{\n" +
+                "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
+                "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
+                "    \"type\": \"object\",\n" +
+                "    \"properties\": {\n"+
+                "        \"free\": { \n" +
+                "            \"type\" :\"boolean\"\n" +
+                "        }\n"+
+                "    }\n"+
+                "}";
+
+        final String simpleObject = "{\n" +
+                "    \"free\": true\n" +
+                "}";
+
+        final Set<ValidationMessage> errors = schemaService.validate(simpleSchema, simpleObject);
+        assertEquals(0, errors.size());
+    }
 }
