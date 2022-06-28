@@ -75,4 +75,17 @@ class SchemaServiceTest {
         final Set<ValidationMessage> errors = schemaService.validate(jsonContent);
         assertEquals(0, errors.size());
     }
+
+    @Test
+    void testWrongType() throws JsonProcessingException {
+        final String jsonContent = "{\n" +
+                "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
+                "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
+                "    \"type\": \"array\"\n" +
+                "}";
+
+        final Set<ValidationMessage> errors = schemaService.validate(jsonContent);
+        assertEquals(1, errors.size());
+        assertTrue(errors.iterator().next().getMessage().startsWith("$.type: must be a constant value object"));
+    }
 }
