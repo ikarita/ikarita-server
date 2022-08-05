@@ -146,6 +146,20 @@ class SchemaServiceTest {
     }
 
     @Test
+    void testNoPropertySchema() throws JsonProcessingException {
+        final String simpleSchema = "{\n" +
+                "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
+                "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
+                "    \"type\": \"object\",\n" +
+                "    \"properties\": {\n"+
+                "    }\n"+
+                "}";
+
+        final Set<ValidationMessage> errors = schemaService.validate(simpleSchema);
+        assertEquals(0, errors.size());
+    }
+
+    @Test
     void testBooleanPassing() throws JsonProcessingException {
         final String simpleSchema = "{\n" +
                 "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
