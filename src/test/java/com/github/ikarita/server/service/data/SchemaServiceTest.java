@@ -1,5 +1,6 @@
 package com.github.ikarita.server.service.data;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.networknt.schema.ValidationMessage;
 import org.junit.jupiter.api.Test;
@@ -96,7 +97,7 @@ class SchemaServiceTest {
                 "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
                 "    \"type\": \"object\",\n" +
                 "    \"properties\": {\n"+
-                "        \"free\": { \n" +
+                "        \"boolean-property\": { \n" +
                 "            \"type\" :\"boolean\"\n" +
                 "        }\n"+
                 "    }\n"+
@@ -105,6 +106,45 @@ class SchemaServiceTest {
         final Set<ValidationMessage> errors = schemaService.validate(simpleSchema);
         assertEquals(0, errors.size());
     }
+
+    @Test
+    void testTwoBoolSchema() throws JsonProcessingException {
+        final String simpleSchema = "{\n" +
+                "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
+                "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
+                "    \"type\": \"object\",\n" +
+                "    \"properties\": {\n"+
+                "        \"boolean-property\": { \n" +
+                "            \"type\" :\"boolean\"\n" +
+                "        },\n"+
+                "       \"boolean-property2\": { \n" +
+                "            \"type\" :\"boolean\"\n" +
+                "        }\n"+
+                "    }\n"+
+                "}";
+
+        final Set<ValidationMessage> errors = schemaService.validate(simpleSchema);
+        assertEquals(0, errors.size());
+    }
+    @Test
+    void testTwoIdenticalPropertiesSchema() {
+        final String simpleSchema = "{\n" +
+                "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
+                "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
+                "    \"type\": \"object\",\n" +
+                "    \"properties\": {\n"+
+                "        \"boolean-property\": { \n" +
+                "            \"type\" :\"boolean\"\n" +
+                "        },\n"+
+                "       \"boolean-property\": { \n" +
+                "            \"type\" :\"boolean\"\n" +
+                "        }\n"+
+                "    }\n"+
+                "}";
+
+        assertThrows(JsonParseException.class, () -> schemaService.validate(simpleSchema));
+    }
+
     @Test
     void testBooleanPassing() throws JsonProcessingException {
         final String simpleSchema = "{\n" +
