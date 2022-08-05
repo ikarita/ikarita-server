@@ -164,9 +164,9 @@ class SchemaServiceTest {
         final String simpleSchema = "{\n" +
                 "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
                 "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
-                "    \"boolean-property\": \"object\",\n" +
+                "    \"type\": \"object\",\n" +
                 "    \"properties\": {\n"+
-                "        \"free\": { \n" +
+                "        \"boolean-property\": { \n" +
                 "            \"type\" :\"boolean\"\n" +
                 "        }\n"+
                 "    }\n"+
@@ -200,5 +200,32 @@ class SchemaServiceTest {
         final Set<ValidationMessage> errors = schemaService.validate(simpleSchema, simpleObject);
         assertEquals(1, errors.size());
         assertEquals("$.boolean-property: string found, boolean expected", errors.iterator().next().getMessage());
+    }
+
+    @Test
+    void testBasicTypePropertiesSchema() throws JsonProcessingException {
+        final String simpleSchema = "{\n" +
+                "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
+                "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
+                "    \"type\": \"object\",\n" +
+                "    \"properties\": {\n"+
+                "        \"boolean-property\": { \n" +
+                "            \"type\" :\"boolean\"\n" +
+                "        },\n"+
+                "        \"integer-property\": { \n" +
+                "            \"type\" :\"integer\"\n" +
+                "        },\n"+
+                "        \"number-property\": { \n" +
+                "            \"type\" :\"number\"\n" +
+                "        },\n"+
+                "        \"string-property\": { \n" +
+                "            \"type\" :\"string\"\n" +
+                "        }\n"+
+                "    }\n"+
+                "}";
+
+        final Set<ValidationMessage> errors = schemaService.validate(simpleSchema);
+        assertEquals(0, errors.size());
+
     }
 }
