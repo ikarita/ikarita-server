@@ -106,11 +106,11 @@ class SchemaServiceTest {
         assertEquals(0, errors.size());
     }
     @Test
-    void testSimpleSchemaObject() throws JsonProcessingException {
+    void testBooleanPassing() throws JsonProcessingException {
         final String simpleSchema = "{\n" +
                 "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
                 "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
-                "    \"type\": \"object\",\n" +
+                "    \"boolean-property\": \"object\",\n" +
                 "    \"properties\": {\n"+
                 "        \"free\": { \n" +
                 "            \"type\" :\"boolean\"\n" +
@@ -119,10 +119,32 @@ class SchemaServiceTest {
                 "}";
 
         final String simpleObject = "{\n" +
-                "    \"free\": true\n" +
+                "    \"boolean-property\": true\n" +
                 "}";
 
         final Set<ValidationMessage> errors = schemaService.validate(simpleSchema, simpleObject);
         assertEquals(0, errors.size());
+    }
+
+    @Test
+    void testBooleanFailing() throws JsonProcessingException {
+        final String simpleSchema = "{\n" +
+                "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
+                "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
+                "    \"type\": \"object\",\n" +
+                "    \"properties\": {\n"+
+                "        \"boolean-property\": { \n" +
+                "            \"type\" :\"boolean\"\n" +
+                "        }\n"+
+                "    }\n"+
+                "}";
+
+        final String simpleObject = "{\n" +
+                "    \"boolean-property\": \"string\"\n" +
+                "}";
+
+        final Set<ValidationMessage> errors = schemaService.validate(simpleSchema, simpleObject);
+        assertEquals(1, errors.size());
+        assertEquals("$.boolean-property: string found, boolean expected", errors.iterator().next().getMessage());
     }
 }
