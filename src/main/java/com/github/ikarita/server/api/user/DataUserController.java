@@ -2,9 +2,8 @@ package com.github.ikarita.server.api.user;
 
 import com.github.ikarita.server.api.ApiUtils;
 import com.github.ikarita.server.model.dto.user.NewCommunityUserRoleDto;
-import com.github.ikarita.server.model.dto.user.NewUserDto;
 import com.github.ikarita.server.model.dto.user.UserDto;
-import com.github.ikarita.server.service.user.UserService;
+import com.github.ikarita.server.service.user.DataUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,10 +21,10 @@ import static com.github.ikarita.server.api.ApiUtils.jsonHeader;
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
-public class UserController {
-    private final UserService userService;
+public class DataUserController {
+    private final DataUserService dataUserService;
 
-    @PreAuthorize("hasAuthority('user:list')")
+    @PreAuthorize("hasAuthority('USER_LIST')")
     @GetMapping(produces = "application/json")
     @Operation(
             tags = {"Users"},
@@ -38,35 +37,14 @@ public class UserController {
             security = {@SecurityRequirement(name = "Bearer JWT")}
     )
     public ResponseEntity<List<UserDto>> getUsers() {
-        final List<UserDto> usersDto = userService.getUsers();
+        final List<UserDto> usersDto = dataUserService.getUsers();
         return ResponseEntity
                 .ok()
                 .headers(jsonHeader())
                 .body(usersDto);
     }
 
-    @PostMapping(produces = "application/json")
-    @Operation(
-            tags = {"Users"},
-            summary = "Creates user.",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Definition of the new user without its ID."
-            ),
-            responses = {
-                    @ApiResponse(
-                            description = "User that was created."
-                    )
-            }
-    )
-    public ResponseEntity<UserDto> createUser(@RequestBody NewUserDto user){
-        final UserDto userDto = userService.createUser(user);
-        return ResponseEntity
-                .ok()
-                .headers(jsonHeader())
-                .body(userDto);
-    }
-
-    @PreAuthorize("hasAuthority('user:ban')")
+    @PreAuthorize("hasAuthority('USER_BAN')")
     @DeleteMapping(path = "/ban/{userId}", produces = "application/json")
     @Operation(
             tags = {"Users"},
@@ -83,14 +61,14 @@ public class UserController {
             security = {@SecurityRequirement(name = "Bearer JWT")}
     )
     public ResponseEntity<UserDto> banUser(HttpServletRequest request, @PathVariable("userId") Long userId){
-        final UserDto userDto = userService.banUser(userId);
+        final UserDto userDto = dataUserService.banUser(userId);
         return ResponseEntity
                 .created(ApiUtils.getURI(request))
                 .headers(jsonHeader())
                 .body(userDto);
     }
 
-    @PreAuthorize("@communitySecurityService.hasAuthority(#roleForUser.getCommunityId(), 'user:role')")
+    @PreAuthorize("hasAuthority('USER_ROLE')")
     @PostMapping(path = "communities/roles", produces = "application/json")
     @Operation(
             tags = {"Users", "Communities"},
@@ -107,7 +85,7 @@ public class UserController {
             security = {@SecurityRequirement(name = "Bearer JWT")}
     )
     public ResponseEntity<UserDto> addRoleToUser(HttpServletRequest request, @RequestBody NewCommunityUserRoleDto roleForUser){
-        final UserDto userDto = userService.addCommunityRole(roleForUser);
+        final UserDto userDto = dataUserService.addCommunityRole(roleForUser);
         return ResponseEntity
                 .created(ApiUtils.getURI(request))
                 .headers(jsonHeader())

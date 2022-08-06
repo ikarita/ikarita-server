@@ -65,7 +65,7 @@ public class CommunityController {
                 .body(communityDto);
     }
 
-    @PreAuthorize("hasAuthority('community:create')")
+    @PreAuthorize("hasAuthority('COMMUNITY_CREATE')")
     @PostMapping(produces = "application/json")
     @Operation(
             tags = {"Communities"},
@@ -88,6 +88,7 @@ public class CommunityController {
                 .body(communityDto);
     }
 
+    @PreAuthorize("hasAuthority('COMMUNITY_CREATE')")
     @PostMapping(path = "/deactivate/{communityId}", produces = "application/json")
     @Operation(
             tags = {"Communities"},

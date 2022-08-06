@@ -2,8 +2,7 @@ package com.github.ikarita.server;
 
 import com.github.ikarita.server.api.community.CommunityController;
 import com.github.ikarita.server.api.community.CommunityRoleController;
-import com.github.ikarita.server.api.user.TokenController;
-import com.github.ikarita.server.api.user.UserController;
+import com.github.ikarita.server.api.user.DataUserController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,15 +14,12 @@ class IkaritaServerApplicationTests extends AbstractIntegrationTest {
 	@Autowired
 	CommunityRoleController communityRoleController;
 	@Autowired
-	TokenController tokenController;
-	@Autowired
-	UserController userController;
+    DataUserController dataUserController;
 
 	@Test
 	void contextLoads() {
 		assertNotNull(communityController);
 		assertNotNull(communityRoleController);
-		assertNotNull(tokenController);
-		assertNotNull(userController);
+		assertNotNull(dataUserController);
 	}
 }

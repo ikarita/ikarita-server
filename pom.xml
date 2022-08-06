@@ -14,7 +14,7 @@
 	<name>ikarita-server</name>
 	<description>Backend for Ikarita</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 		<guava.version>31.1-jre</guava.version>
 		<hibernatetypes52.version>2.17.0</hibernatetypes52.version>
 		<jsonschemavalidator.version>1.0.72</jsonschemavalidator.version>
@@ -112,6 +112,11 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
+			<groupId>com.c4-soft.springaddons</groupId>
+			<artifactId>spring-addons-webmvc-jwt-resource-server</artifactId>
+			<version>5.1.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
@@ -131,6 +136,12 @@
 			<groupId>org.testcontainers</groupId>
 			<artifactId>junit-jupiter</artifactId>
 			<version>${testcontainers.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.c4-soft.springaddons</groupId>
+			<artifactId>spring-addons-webmvc-test</artifactId>
+			<version>5.1.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

@@ -1,6 +1,5 @@
 package com.github.ikarita.server.security.permissions;
 
-import com.github.ikarita.server.security.permissions.UserPermission;
 import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
