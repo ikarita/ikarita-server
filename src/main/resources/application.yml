@@ -23,8 +23,10 @@ com:
   c4-soft:
     springaddons:
       security:
+        issuers[0]:
+          location: http://localhost:8089/auth/realms/ikarita
         jwt-issuers:
-          - location: https://localhost:8089/auth/realms/ikarita
+          - location: http://localhost:8089/auth/realms/ikarita
             authorities:
               claims: realm_access.roles,resource_access.spring-addons.roles
         permit-all: /actuator/health/readiness,/actuator/health/liveness,/v3/api-docs/**,/swagger-ui/**
