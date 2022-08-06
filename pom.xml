@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.7</version>
+		<version>2.7.2</version>
 		<relativePath/>
 	</parent>
 	<groupId>com.github.ikarita</groupId>
@@ -15,10 +15,13 @@
 	<description>Backend for Ikarita</description>
 	<properties>
 		<java.version>11</java.version>
-		<testcontainers.version>1.17.1</testcontainers.version>
-		<mapstruct.version>1.4.2.Final</mapstruct.version>
 		<guava.version>31.1-jre</guava.version>
-		<jwt.version>3.19.2</jwt.version>
+		<hibernatetypes52.version>2.17.0</hibernatetypes52.version>
+		<jsonschemavalidator.version>1.0.72</jsonschemavalidator.version>
+		<jwt.version>4.0.0</jwt.version>
+		<mapstruct.version>1.5.2.Final</mapstruct.version>
+		<openapi.version>1.6.9</openapi.version>
+		<testcontainers.version>1.17.3</testcontainers.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -47,17 +50,17 @@
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.6.8</version>
+			<version>${openapi.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-webmvc-core</artifactId>
-			<version>1.6.8</version>
+			<version>${openapi.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-security</artifactId>
-			<version>1.6.8</version>
+			<version>${openapi.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mapstruct</groupId>
@@ -77,13 +80,13 @@
 		<dependency>
 			<groupId>com.networknt</groupId>
 			<artifactId>json-schema-validator</artifactId>
-			<version>1.0.69</version>
+			<version>${jsonschemavalidator.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.vladmihalcea</groupId>
 			<artifactId>hibernate-types-52</artifactId>
-			<version>2.16.2</version>
+			<version>${hibernatetypes52.version}</version>
 		</dependency>
 
 <!--		<dependency>-->
