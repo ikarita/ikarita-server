@@ -38,6 +38,6 @@ class DataUserControllerTest {
     @OpenId(authorities = { "WRONG" }, claims = @OpenIdClaims(preferredUsername = "Tonton Pirate"))
     void testGetCommunityWithWrongAuthenticationIsUnauthorized() throws Exception {
         mockMvc.perform(post("/api/v1/communities/roles"))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isForbidden());
     }
 }

@@ -69,7 +69,7 @@ class CommunityControllerTest {
         final NewCommunityDto newCommunityDto = new NewCommunityDto("Community 1", true);
 
         mockMvc.perform(post("/api/v1/communities").contentType(MediaType.APPLICATION_JSON).content(toJson(newCommunityDto)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
