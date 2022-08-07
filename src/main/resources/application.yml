@@ -14,6 +14,11 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show-sql: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://localhost:9443/auth/realms/ikarita
 
 springdoc:
   swagger-ui:
