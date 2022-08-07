@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,7 @@ import static com.github.ikarita.server.api.ApiUtils.jsonHeader;
 public class CommunityRoleController {
     private final CommunityRoleService communityRoleService;
 
+    @PreAuthorize("hasAuthority('COMMUNITY_ROLE')")
     @PostMapping(produces = "application/json")
     @Operation(
             tags = {"Communities"},
