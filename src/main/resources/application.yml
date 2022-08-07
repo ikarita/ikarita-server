@@ -2,7 +2,7 @@ spring:
   main:
     banner-mode: off
   datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:5432/ikarita
+    url: jdbc:postgresql://${POSTGRES_ADDRESS:localhost:5432}/ikarita
     username: ikarita
     password: ikarita
     driver-class-name: org.postgresql.Driver
@@ -18,7 +18,17 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://localhost:9443/auth/realms/ikarita
+          issuer-uri: http://${ISSUER_URI_ADDRESS:localhost:8089}/auth/realms/ikarita
+
+com:
+  c4-soft:
+    springaddons:
+      security.issuers:
+       - location: http://${ISSUER_URI_ADDRESS:localhost:8089}/auth/realms/ikarita
+         authorities:
+           claims:
+           - realm_access.roles
+           - resource_access.spring-addons.roles
 
 springdoc:
   swagger-ui:
