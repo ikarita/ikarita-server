@@ -88,7 +88,7 @@ public class CommunityController {
                 .body(communityDto);
     }
 
-    @PreAuthorize("hasAuthority('COMMUNITY_CREATE')")
+    @PreAuthorize("hasCommunityAuthority(#communityId, 'deactivate')")
     @PostMapping(path = "/deactivate/{communityId}", produces = "application/json")
     @Operation(
             tags = {"Communities"},

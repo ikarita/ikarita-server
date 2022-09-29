@@ -1,8 +1,12 @@
 package com.github.ikarita.server.security;
 
+import com.c4_soft.springaddons.security.oauth2.spring.C4MethodSecurityExpressionHandler;
+import com.c4_soft.springaddons.security.oauth2.spring.C4MethodSecurityExpressionRoot;
+import com.github.ikarita.server.model.entities.community.Community;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -37,8 +41,8 @@ public class SecurityConfiguration {
         }
 
         http.authorizeRequests()
-                .antMatchers("/actuator/health/readiness", "/actuator/health/liveness", "/v3/api-docs/**").permitAll()
-                .anyRequest().authenticated();
+                .antMatchers("/actuator/health/readiness", "/actuator/health/liveness", "/v3/api-docs/**")
+                .permitAll();
 
         return http.build();
     }
@@ -54,5 +58,16 @@ public class SecurityConfiguration {
         source.registerCorsConfiguration("/api.v1/**", configuration);
 
         return source;
+    }
+
+    @Bean
+    public MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
+        return new C4MethodSecurityExpressionHandler(CommunityMethodSecurityExpressionRoot::new);
+    }
+
+    static final class CommunityMethodSecurityExpressionRoot extends C4MethodSecurityExpressionRoot {
+        public boolean hasCommunityAuthority(String community, String authority){
+            return false;
+        }
     }
 }
