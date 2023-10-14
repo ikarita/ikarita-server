@@ -1,9 +1,8 @@
 name: Maven Test
 on:
-  workflow_dispatch:
+  workflow_call:
   push:
-    branches:
-      - main
+
 jobs:
   tests:
     name: Maven Verify
@@ -38,14 +37,3 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Run Tests
         run: mvn -B verify
-      - name: Pushes OpenAPI Configuration
-        uses: cpina/github-action-push-to-another-repository@main
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-        with:
-          source-directory: 'target/openapi'
-          destination-github-username: 'ikarita'
-          destination-repository-name: 'ikarita-server-api'
-          target-branch: 'dev'
-          user-email: 'renaudrwemalika@gmail.com'
-          user-name: 'kabinja'
