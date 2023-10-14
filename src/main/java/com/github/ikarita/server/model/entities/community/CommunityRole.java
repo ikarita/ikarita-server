@@ -3,7 +3,7 @@ package com.github.ikarita.server.model.entities.community;
 import com.github.ikarita.server.security.permissions.CommunityPermission;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -16,7 +16,7 @@ import java.util.Collection;
 public class CommunityRole {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private long id;
     private String name;
     @ElementCollection
     @Enumerated(EnumType.STRING)

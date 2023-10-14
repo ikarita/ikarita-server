@@ -23,12 +23,22 @@ spring:
 com:
   c4-soft:
     springaddons:
-      security.issuers:
-       - location: http://${ISSUER_URI_ADDRESS:localhost:8089}/auth/realms/ikarita
-         authorities:
-           claims:
-           - realm_access.roles
-           - resource_access.spring-addons.roles
+      oidc:
+        ops:
+          - iss: http://${ISSUER_URI_ADDRESS:localhost:8089}/auth/realms/ikarita
+            username-claim: preferred_username
+            authorities:
+              - path: $.realm_access.roles
+                prefix: ROLE_
+              - path: $.resource_access.*.roles
+        resourceserver:
+          cors:
+            - path: /**
+              allowed-origin-patterns: ${origins}
+          permit-all:
+            - "/actuator/health/readiness"
+            - "/actuator/health/liveness"
+            - "/v3/api-docs/**"
 
 springdoc:
   swagger-ui:

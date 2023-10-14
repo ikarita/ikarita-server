@@ -1,21 +1,13 @@
 package com.github.ikarita.server.model.entities;
 
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import java.util.UUID;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 
 @MappedSuperclass
-@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 public class AbstractIkaritaEntity {
     @Id
-    @Type(type = "pg-uuid")
-    private UUID id;
-
-    public AbstractIkaritaEntity() {
-        this.id = UUID.randomUUID();
-    }
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
 }

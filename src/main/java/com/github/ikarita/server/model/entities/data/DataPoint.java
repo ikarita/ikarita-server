@@ -8,10 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Type;
-//import org.locationtech.jts.geom.Point;
+import org.hibernate.annotations.JdbcTypeCode;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+import org.hibernate.type.SqlTypes;
+import org.springframework.data.geo.Point;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,8 +26,7 @@ public class DataPoint extends AbstractIkaritaEntity {
     @Enumerated(EnumType.STRING)
     private FeatureStatus status;
 
-    //@Column(columnDefinition = "geography")
-    //private Point coordinates;
+    private Point coordinates;
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -38,7 +39,7 @@ public class DataPoint extends AbstractIkaritaEntity {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-    @Type(type = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     @Basic(fetch = FetchType.LAZY)
     private JsonNode metadata;

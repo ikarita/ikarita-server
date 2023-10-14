@@ -4,7 +4,7 @@ import com.github.ikarita.server.security.permissions.UserRole;
 import lombok.*;
 import org.checkerframework.common.aliasing.qual.Unique;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Set;
 
 @Entity
@@ -15,8 +15,8 @@ import java.util.Set;
 @Table(name = "ikarita_user")
 public class LocalUser {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
     @Unique
     private String username;
     @Unique

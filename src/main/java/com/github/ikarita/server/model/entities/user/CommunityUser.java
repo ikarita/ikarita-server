@@ -5,7 +5,7 @@ import com.github.ikarita.server.model.entities.community.CommunityRole;
 import com.github.ikarita.server.model.entities.community.CommunityUserId;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Collection;
 
 @Getter

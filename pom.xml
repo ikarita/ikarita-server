@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.2</version>
+		<version>3.1.4</version>
 		<relativePath/>
 	</parent>
 	<groupId>com.github.ikarita</groupId>
@@ -15,15 +15,20 @@
 	<description>Backend for Ikarita</description>
 	<properties>
 		<java.version>17</java.version>
-		<guava.version>31.1-jre</guava.version>
-		<hibernatetypes52.version>2.17.0</hibernatetypes52.version>
-		<jsonschemavalidator.version>1.0.72</jsonschemavalidator.version>
-		<jwt.version>4.0.0</jwt.version>
-		<mapstruct.version>1.5.2.Final</mapstruct.version>
-		<openapi.version>1.6.9</openapi.version>
-		<testcontainers.version>1.17.3</testcontainers.version>
+		<guava.version>32.1.2-jre</guava.version>
+		<hibernate.version>6.3.1.Final</hibernate.version>
+		<jsonschemavalidator.version>1.0.87</jsonschemavalidator.version>
+		<jwt.version>4.4.0</jwt.version>
+		<mapstruct.version>1.5.5.Final</mapstruct.version>
+		<openapi.version>1.7.0</openapi.version>
+		<testcontainers.version>1.19.1</testcontainers.version>
+		<spring.addons.starter.oidc.version>7.1.10</spring.addons.starter.oidc.version>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
@@ -78,25 +83,16 @@
 			<artifactId>json-schema-validator</artifactId>
 			<version>${jsonschemavalidator.version}</version>
 		</dependency>
-
 		<dependency>
-			<groupId>com.vladmihalcea</groupId>
-			<artifactId>hibernate-types-52</artifactId>
-			<version>${hibernatetypes52.version}</version>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${hibernate.version}</version>
 		</dependency>
-
-<!--		<dependency>-->
-<!--			<groupId>org.locationtech.jts</groupId>-->
-<!--			<artifactId>jts-core</artifactId>-->
-<!--			<version>1.18.2</version>-->
-<!--		</dependency>-->
-
-<!--		<dependency>-->
-<!--			<groupId>org.hibernate</groupId>-->
-<!--			<artifactId>hibernate-spatial</artifactId>-->
-<!--			<version>6.0.1.Final</version>-->
-<!--		</dependency>-->
-
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-spatial</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
@@ -109,8 +105,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.c4-soft.springaddons</groupId>
-			<artifactId>spring-addons-webmvc-jwt-resource-server</artifactId>
-			<version>5.1.0</version>
+			<artifactId>spring-addons-starter-oidc</artifactId>
+			<version>${spring.addons.starter.oidc.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -136,8 +132,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.c4-soft.springaddons</groupId>
-			<artifactId>spring-addons-webmvc-test</artifactId>
-			<version>5.1.0</version>
+			<artifactId>spring-addons-starter-oidc-test</artifactId>
+			<version>${spring.addons.starter.oidc.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

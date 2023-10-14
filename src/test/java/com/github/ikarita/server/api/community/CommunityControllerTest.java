@@ -1,8 +1,6 @@
 package com.github.ikarita.server.api.community;
 
-import com.c4_soft.springaddons.security.oauth2.test.annotations.OpenId;
-import com.c4_soft.springaddons.security.oauth2.test.annotations.OpenIdClaims;
-import com.c4_soft.springaddons.security.oauth2.test.mockmvc.AutoConfigureSecurityAddons;
+import com.c4_soft.springaddons.security.oauth2.test.annotations.WithMockAuthentication;
 import com.github.ikarita.server.model.dto.community.CommunityDto;
 import com.github.ikarita.server.model.dto.community.NewCommunityDto;
 import com.github.ikarita.server.security.SecurityConfiguration;
@@ -25,7 +23,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CommunityController.class)
-@AutoConfigureSecurityAddons
 @Import(SecurityConfiguration.class)
 class CommunityControllerTest {
     @Autowired
@@ -45,7 +42,7 @@ class CommunityControllerTest {
     }
 
     @Test
-    @OpenId(authorities = { "ANY" }, claims = @OpenIdClaims(preferredUsername = "Tonton Pirate"))
+    @WithMockAuthentication(authorities = { "ANY" })
     void testGetCommunitiesWithAuthenticationIsOk() throws Exception {
         final CommunityDto community1 = new CommunityDto(1L, "Community 1", true);
         final CommunityDto community2 = new CommunityDto(2L, "Community 2", true);
@@ -56,7 +53,7 @@ class CommunityControllerTest {
     }
 
     @Test
-    @OpenId(authorities = { "WRONG" }, claims = @OpenIdClaims(preferredUsername = "Tonton Pirate"))
+    @WithMockAuthentication(authorities = { "WRONG" })
     void testPostCommunityWithWrongAuthorityIsForbidden() throws Exception {
         final NewCommunityDto newCommunityDto = new NewCommunityDto("Community 1", true);
 
@@ -73,7 +70,7 @@ class CommunityControllerTest {
     }
 
     @Test
-    @OpenId(authorities = { "COMMUNITY_CREATE" }, claims = @OpenIdClaims(preferredUsername = "Some User"))
+    @WithMockAuthentication(authorities = { "COMMUNITY_CREATE" })
     void testPostCommunityWithContributorIsForbidden() throws Exception {
         final NewCommunityDto newCommunityDto = new NewCommunityDto("Community 1", true);
 
@@ -82,7 +79,7 @@ class CommunityControllerTest {
     }
 
     @Test
-    @OpenId("COMMUNITY_CREATE")
+    @WithMockAuthentication("COMMUNITY_CREATE")
     void testPostCommunityWithAuthenticationIsOk() throws Exception {
         final NewCommunityDto newCommunityDto = new NewCommunityDto("Community 1", true);
         final CommunityDto communityDto = new CommunityDto(1L, "Community 1", true);

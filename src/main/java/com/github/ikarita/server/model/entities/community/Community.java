@@ -7,9 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.checkerframework.common.aliasing.qual.Unique;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.JdbcTypeCode;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+import org.hibernate.type.SqlTypes;
+
 import java.util.List;
 import java.util.Set;
 
@@ -22,12 +24,10 @@ import java.util.Set;
 public class Community {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private long id;
 
     @Unique
     private String name;
-
-
 
     @Column(columnDefinition = "boolean default true")
     private boolean isPublic;
@@ -41,6 +41,6 @@ public class Community {
     @OneToMany(mappedBy = "community")
     private List<DataPoint> geoData;
 
-    @Type(type = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     private Object metadataSchema;
 }
