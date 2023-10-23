@@ -71,6 +71,13 @@ class CommunityControllerTest {
 
     @Test
     @WithMockAuthentication(authorities = { "COMMUNITY_CREATE" })
+    void testPostCommunityDeactivate() throws Exception {
+        mockMvc.perform(post("/api/v1/communities/deactivate/1"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockAuthentication(authorities = { "COMMUNITY_CREATE" })
     void testPostCommunityWithContributorIsForbidden() throws Exception {
         final NewCommunityDto newCommunityDto = new NewCommunityDto("Community 1", true);
 

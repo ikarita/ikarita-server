@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManagerResolver;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -57,11 +58,10 @@ public class SecurityConfiguration {
             HttpSecurity http,
             ServerProperties serverProperties,
             @Value("${origins:[]}") String[] origins,
-            @Value("${permit-all:[]}") String[] permitAll,
-            AuthenticationManagerResolver<HttpServletRequest> authenticationManagerResolver)
+            @Value("${permit-all:[]}") String[] permitAll)
             throws Exception {
 
-        http.oauth2ResourceServer(oauth2 -> oauth2.authenticationManagerResolver(authenticationManagerResolver));
+        //http.oauth2ResourceServer(oauth2 -> oauth2.authenticationManagerResolver(authenticationManagerResolver));
 
         // Enable and configure CORS
         http.cors(cors -> cors.configurationSource(corsConfigurationSource(origins)));
@@ -102,122 +102,8 @@ public class SecurityConfiguration {
         return source;
     }
 
-    @Data
-    @Configuration
-    @ConfigurationProperties(prefix = "spring-addons")
-    static class SpringAddonsProperties {
-        private IssuerProperties[] issuers = {};
-
-        @Data
-        static class IssuerProperties {
-            private URL uri;
-
-            @NestedConfigurationProperty
-            private ClaimMappingProperties[] claims;
-
-            private String usernameJsonPath = JwtClaimNames.SUB;
-
-            @Data
-            static class ClaimMappingProperties {
-                private String jsonPath;
-                private CaseProcessing caseProcessing = CaseProcessing.UNCHANGED;
-                private String prefix = "";
-
-                enum CaseProcessing {
-                    UNCHANGED, TO_LOWER, TO_UPPER
-                }
-            }
-        }
-
-        public IssuerProperties get(URL issuerUri) throws MisconfigurationException {
-            final var issuerProperties = Stream.of(issuers).filter(iss -> issuerUri.equals(iss.getUri())).toList();
-            if (issuerProperties.isEmpty()) {
-                throw new MisconfigurationException("Missing authorities mapping properties for %s".formatted(issuerUri.toString()));
-            }
-            if (issuerProperties.size() > 1) {
-                throw new MisconfigurationException("Too many authorities mapping properties for %s".formatted(issuerUri.toString()));
-            }
-            return issuerProperties.get(0);
-        }
-
-        static class MisconfigurationException extends RuntimeException {
-            @Serial
-            private static final long serialVersionUID = 5887967904749547431L;
-
-            public MisconfigurationException(String msg) {
-                super(msg);
-            }
-        }
-    }
-
-    @RequiredArgsConstructor
-    static class JwtGrantedAuthoritiesConverter implements Converter<Jwt, Collection<? extends GrantedAuthority>> {
-        private final SpringAddonsProperties.IssuerProperties properties;
-
-        @Override
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-        public Collection<? extends GrantedAuthority> convert(Jwt jwt) {
-            return Stream.of(properties.claims).flatMap(claimProperties -> {
-                Object claim;
-                try {
-                    claim = JsonPath.read(jwt.getClaims(), claimProperties.jsonPath);
-                } catch (PathNotFoundException e) {
-                    claim = null;
-                }
-                if (claim == null) {
-                    return Stream.empty();
-                }
-                if (claim instanceof String claimStr) {
-                    return Stream.of(claimStr.split(","));
-                }
-                if (claim instanceof String[] claimArr) {
-                    return Stream.of(claimArr);
-                }
-                if (Collection.class.isAssignableFrom(claim.getClass())) {
-                    final var iterator = ((Collection) claim).iterator();
-                    if (!iterator.hasNext()) {
-                        return Stream.empty();
-                    }
-                    final var firstItem = iterator.next();
-                    if (firstItem instanceof String) {
-                        return (Stream<String>) ((Collection) claim).stream();
-                    }
-                    if (Collection.class.isAssignableFrom(firstItem.getClass())) {
-                        return (Stream<String>) ((Collection) claim).stream().flatMap(colItem -> ((Collection) colItem).stream()).map(String.class::cast);
-                    }
-                }
-                return Stream.empty();
-            }).map(SimpleGrantedAuthority::new).map(GrantedAuthority.class::cast).toList();
-        }
-    }
-
-    @Component
-    @RequiredArgsConstructor
-    static class SpringAddonsJwtAuthenticationConverter implements Converter<Jwt, JwtAuthenticationToken> {
-        private final SpringAddonsProperties springAddonsProperties;
-
-        @Override
-        public JwtAuthenticationToken convert(Jwt jwt) {
-            final var issuerProperties = springAddonsProperties.get(jwt.getIssuer());
-            final var authorities = new JwtGrantedAuthoritiesConverter(issuerProperties).convert(jwt);
-            final String username = JsonPath.read(jwt.getClaims(), issuerProperties.getUsernameJsonPath());
-            return new JwtAuthenticationToken(jwt, authorities, username);
-        }
-    }
-
     @Bean
-    AuthenticationManagerResolver<HttpServletRequest>
-    authenticationManagerResolver(SpringAddonsProperties addonsProperties, SpringAddonsJwtAuthenticationConverter authenticationConverter) {
-        final Map<String, AuthenticationManager> authenticationProviders =
-                Stream.of(addonsProperties.getIssuers()).map(SpringAddonsProperties.IssuerProperties::getUri).map(URL::toString)
-                        .collect(Collectors.toMap(issuer -> issuer, issuer -> authenticationProvider(issuer, authenticationConverter)::authenticate));
-        return new JwtIssuerAuthenticationManagerResolver(authenticationProviders::get);
-    }
-
-    JwtAuthenticationProvider authenticationProvider(String issuer, SpringAddonsJwtAuthenticationConverter authenticationConverter) {
-        JwtDecoder decoder = JwtDecoders.fromIssuerLocation(issuer);
-        var provider = new JwtAuthenticationProvider(decoder);
-        provider.setJwtAuthenticationConverter(authenticationConverter);
-        return provider;
+    static MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
+        return new IkaritaSecurityExpressionHandler(CommunityMethodSecurityExpressionRoot::new);
     }
 }
