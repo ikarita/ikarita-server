@@ -1,5 +1,7 @@
 package com.github.ikarita.server.service.data;
 
+import com.github.ikarita.server.Utils;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.networknt.schema.ValidationMessage;
@@ -9,6 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,10 +36,17 @@ class SchemaServiceTest {
 
     @Test
     void testWrongSchema() throws JsonProcessingException {
-        final String jsonContent = "{\n" +
-                "    \"$schema\": \"schema.json\",\n" +
-                "    \"type\": \"object\"\n" +
-                "}";
+        final String jsonPath = "schema/wrong_schema.json";
+        String jsonContent = null;
+        final File jsonFile;
+        try {
+            jsonFile = Utils.getResourceFile(jsonPath);
+            jsonContent = Utils.getFileContent(jsonFile);
+        } catch (IOException | URISyntaxException e) {
+            fail(String.format("Failed to load '%s': %s", jsonPath, e.getMessage()));
+        }
+
+        System.out.println(jsonContent);
 
         final Set<ValidationMessage> errors = schemaService.validate(jsonContent);
         assertEquals(1, errors.size());
@@ -96,11 +108,11 @@ class SchemaServiceTest {
                 "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
                 "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
                 "    \"type\": \"object\",\n" +
-                "    \"properties\": {\n"+
+                "    \"properties\": {\n" +
                 "        \"boolean-property\": { \n" +
                 "            \"type\" :\"boolean\"\n" +
-                "        }\n"+
-                "    }\n"+
+                "        }\n" +
+                "    }\n" +
                 "}";
 
         final Set<ValidationMessage> errors = schemaService.validate(simpleSchema);
@@ -113,33 +125,34 @@ class SchemaServiceTest {
                 "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
                 "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
                 "    \"type\": \"object\",\n" +
-                "    \"properties\": {\n"+
+                "    \"properties\": {\n" +
                 "        \"boolean-property\": { \n" +
                 "            \"type\" :\"boolean\"\n" +
-                "        },\n"+
+                "        },\n" +
                 "       \"boolean-property2\": { \n" +
                 "            \"type\" :\"boolean\"\n" +
-                "        }\n"+
-                "    }\n"+
+                "        }\n" +
+                "    }\n" +
                 "}";
 
         final Set<ValidationMessage> errors = schemaService.validate(simpleSchema);
         assertEquals(0, errors.size());
     }
+
     @Test
     void testTwoIdenticalPropertiesSchema() {
         final String simpleSchema = "{\n" +
                 "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
                 "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
                 "    \"type\": \"object\",\n" +
-                "    \"properties\": {\n"+
+                "    \"properties\": {\n" +
                 "        \"boolean-property\": { \n" +
                 "            \"type\" :\"boolean\"\n" +
-                "        },\n"+
+                "        },\n" +
                 "       \"boolean-property\": { \n" +
                 "            \"type\" :\"boolean\"\n" +
-                "        }\n"+
-                "    }\n"+
+                "        }\n" +
+                "    }\n" +
                 "}";
 
         assertThrows(JsonParseException.class, () -> schemaService.validate(simpleSchema));
@@ -151,8 +164,8 @@ class SchemaServiceTest {
                 "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
                 "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
                 "    \"type\": \"object\",\n" +
-                "    \"properties\": {\n"+
-                "    }\n"+
+                "    \"properties\": {\n" +
+                "    }\n" +
                 "}";
 
         final Set<ValidationMessage> errors = schemaService.validate(simpleSchema);
@@ -165,11 +178,11 @@ class SchemaServiceTest {
                 "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
                 "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
                 "    \"type\": \"object\",\n" +
-                "    \"properties\": {\n"+
+                "    \"properties\": {\n" +
                 "        \"boolean-property\": { \n" +
                 "            \"type\" :\"boolean\"\n" +
-                "        }\n"+
-                "    }\n"+
+                "        }\n" +
+                "    }\n" +
                 "}";
 
         final String simpleObject = "{\n" +
@@ -186,11 +199,11 @@ class SchemaServiceTest {
                 "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
                 "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
                 "    \"type\": \"object\",\n" +
-                "    \"properties\": {\n"+
+                "    \"properties\": {\n" +
                 "        \"boolean-property\": { \n" +
                 "            \"type\" :\"boolean\"\n" +
-                "        }\n"+
-                "    }\n"+
+                "        }\n" +
+                "    }\n" +
                 "}";
 
         final String simpleObject = "{\n" +
@@ -208,20 +221,20 @@ class SchemaServiceTest {
                 "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
                 "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
                 "    \"type\": \"object\",\n" +
-                "    \"properties\": {\n"+
+                "    \"properties\": {\n" +
                 "        \"boolean-property\": { \n" +
                 "            \"type\" :\"boolean\"\n" +
-                "        },\n"+
+                "        },\n" +
                 "        \"integer-property\": { \n" +
                 "            \"type\" :\"integer\"\n" +
-                "        },\n"+
+                "        },\n" +
                 "        \"number-property\": { \n" +
                 "            \"type\" :\"number\"\n" +
-                "        },\n"+
+                "        },\n" +
                 "        \"string-property\": { \n" +
                 "            \"type\" :\"string\"\n" +
-                "        }\n"+
-                "    }\n"+
+                "        }\n" +
+                "    }\n" +
                 "}";
 
         final Set<ValidationMessage> errors = schemaService.validate(simpleSchema);
