@@ -36,27 +36,17 @@ class SchemaServiceTest {
 
     @Test
     void testWrongSchema() throws JsonProcessingException {
-        final String jsonPath = "schema/wrong_schema.json";
-        String jsonContent = null;
-        final File jsonFile;
-        try {
-            jsonFile = Utils.getResourceFile(jsonPath);
-            jsonContent = Utils.getFileContent(jsonFile);
-        } catch (IOException | URISyntaxException e) {
-            fail(String.format("Failed to load '%s': %s", jsonPath, e.getMessage()));
-        }
+        final String jsonContent = Utils.getFileContentFail("schema/wrong_schema.json");
 
         final Set<ValidationMessage> errors = schemaService.validate(jsonContent);
         assertEquals(1, errors.size());
         assertTrue(errors.iterator().next().getMessage().startsWith("$.$schema: does not match the uri pattern"));
+
     }
 
     @Test
     void testRightSchema() throws JsonProcessingException {
-        final String jsonContent = "{\n" +
-                "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
-                "    \"type\": \"object\"\n" +
-                "}";
+        final String jsonContent = Utils.getFileContentFail("schema/right_schema.json");
 
         final Set<ValidationMessage> errors = schemaService.validate(jsonContent);
         assertEquals(0, errors.size());
@@ -64,11 +54,7 @@ class SchemaServiceTest {
 
     @Test
     void testWrongId() throws JsonProcessingException {
-        final String jsonContent = "{\n" +
-                "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
-                "    \"$id\": \"test1\",\n" +
-                "    \"type\": \"object\"\n" +
-                "}";
+        final String jsonContent = Utils.getFileContentFail("schema/wrong_id.json");
 
         final Set<ValidationMessage> errors = schemaService.validate(jsonContent);
         assertEquals(1, errors.size());
@@ -77,11 +63,7 @@ class SchemaServiceTest {
 
     @Test
     void testRightId() throws JsonProcessingException {
-        final String jsonContent = "{\n" +
-                "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
-                "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
-                "    \"type\": \"object\"\n" +
-                "}";
+        final String jsonContent = Utils.getFileContentFail("schema/right_id.json");
 
         final Set<ValidationMessage> errors = schemaService.validate(jsonContent);
         assertEquals(0, errors.size());
@@ -89,11 +71,7 @@ class SchemaServiceTest {
 
     @Test
     void testWrongType() throws JsonProcessingException {
-        final String jsonContent = "{\n" +
-                "    \"$schema\": \"https://json-schema.org/draft/2019-09/schema\",\n" +
-                "    \"$id\": \"https://ikarita.org/shemas/001\",\n" +
-                "    \"type\": \"array\"\n" +
-                "}";
+        final String jsonContent = Utils.getFileContentFail("schema/wrong_type.json");
 
         final Set<ValidationMessage> errors = schemaService.validate(jsonContent);
         assertEquals(1, errors.size());
