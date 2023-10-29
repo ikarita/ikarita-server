@@ -46,8 +46,6 @@ class SchemaServiceTest {
             fail(String.format("Failed to load '%s': %s", jsonPath, e.getMessage()));
         }
 
-        System.out.println(jsonContent);
-
         final Set<ValidationMessage> errors = schemaService.validate(jsonContent);
         assertEquals(1, errors.size());
         assertTrue(errors.iterator().next().getMessage().startsWith("$.$schema: does not match the uri pattern"));
