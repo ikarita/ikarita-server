@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.checkerframework.common.aliasing.qual.Unique;
 import org.hibernate.annotations.JdbcTypeCode;
 
 import jakarta.persistence.*;
@@ -26,7 +25,7 @@ public class Community {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Unique
+    @Column(unique = true)
     private String name;
 
     @Column(columnDefinition = "boolean default true")

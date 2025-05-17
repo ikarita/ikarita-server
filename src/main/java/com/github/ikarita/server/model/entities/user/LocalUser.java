@@ -2,7 +2,6 @@ package com.github.ikarita.server.model.entities.user;
 
 import com.github.ikarita.server.security.permissions.UserRole;
 import lombok.*;
-import org.checkerframework.common.aliasing.qual.Unique;
 
 import jakarta.persistence.*;
 import java.util.Set;
@@ -17,9 +16,9 @@ public class LocalUser {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    @Unique
+    @Column(unique = true)
     private String username;
-    @Unique
+    @Column(unique = true)
     private String email;
     private String password;
     @Enumerated(EnumType.STRING)
