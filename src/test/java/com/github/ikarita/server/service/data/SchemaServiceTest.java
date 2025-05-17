@@ -27,8 +27,8 @@ class SchemaServiceTest {
         final String jsonContent = "{}";
         final Set<ValidationMessage> errors = schemaService.validate(jsonContent);
         assertEquals(2, errors.size());
-        assertTrue(errors.stream().anyMatch(e -> e.getMessage().equals("$.$schema: is missing but it is required")));
-        assertTrue(errors.stream().anyMatch(e -> e.getMessage().equals("$.type: is missing but it is required")));
+        assertTrue(errors.stream().anyMatch(e -> e.getMessage().equals("$: required property '$schema' not found")));
+        assertTrue(errors.stream().anyMatch(e -> e.getMessage().equals("$: required property 'type' not found")));
     }
 
     @Test
