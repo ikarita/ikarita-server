@@ -6,13 +6,14 @@ import com.github.ikarita.server.model.dto.community.CommunitySimpleDto;
 import com.github.ikarita.server.model.dto.community.NewCommunityRoleDto;
 import com.github.ikarita.server.security.SecurityConfiguration;
 import com.github.ikarita.server.service.community.CommunityRoleService;
+import com.github.ikarita.server.service.user.UserSecurityService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,8 +29,10 @@ class DataUserControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private CommunityRoleService communityRoleService;
+    @MockitoBean
+    private UserSecurityService userSecurityService;
 
 
     @Test

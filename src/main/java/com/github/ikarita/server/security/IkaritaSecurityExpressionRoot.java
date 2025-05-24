@@ -1,5 +1,6 @@
 package com.github.ikarita.server.security;
 
+import com.github.ikarita.server.service.user.UserSecurityService;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.core.Authentication;
@@ -12,6 +13,7 @@ public class IkaritaSecurityExpressionRoot extends SecurityExpressionRoot implem
     private Object filterObject;
     private Object returnObject;
     private Object target;
+    protected UserSecurityService userSecurityService;
 
     public IkaritaSecurityExpressionRoot() {
         super(SecurityContextHolder.getContext().getAuthentication());
@@ -49,5 +51,9 @@ public class IkaritaSecurityExpressionRoot extends SecurityExpressionRoot implem
     @Override
     public Object getThis() {
         return target;
+    }
+
+    public void setUserService(UserSecurityService userSecurityService) {
+        this.userSecurityService = userSecurityService;
     }
 }

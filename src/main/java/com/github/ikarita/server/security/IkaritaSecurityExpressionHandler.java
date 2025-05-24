@@ -1,5 +1,6 @@
 package com.github.ikarita.server.security;
 
+import com.github.ikarita.server.service.user.UserSecurityService;
 import lombok.RequiredArgsConstructor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.aop.framework.AopProxyUtils;
@@ -18,6 +19,7 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 public class IkaritaSecurityExpressionHandler extends DefaultMethodSecurityExpressionHandler {
     private final Supplier<IkaritaSecurityExpressionRoot> expressionRootSupplier;
+    private final UserSecurityService userSecurityService;
 
     /**
      * Creates the root object for expression evaluation.
@@ -39,6 +41,7 @@ public class IkaritaSecurityExpressionHandler extends DefaultMethodSecurityExpre
     private MethodSecurityExpressionOperations createSecurityExpressionRoot(Supplier<Authentication> authentication,
                                                                             MethodInvocation invocation) {
         final var root = expressionRootSupplier.get();
+        root.setUserService(userSecurityService);
         root.setThis(invocation.getThis());
         root.setPermissionEvaluator(getPermissionEvaluator());
         root.setTrustResolver(getTrustResolver());

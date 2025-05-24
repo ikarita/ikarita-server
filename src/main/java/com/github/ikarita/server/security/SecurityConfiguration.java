@@ -1,58 +1,31 @@
 package com.github.ikarita.server.security;
 
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.PathNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import com.github.ikarita.server.service.user.UserSecurityService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
-import org.springframework.security.authentication.AuthenticationManagerResolver;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtClaimNames;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtDecoders;
-import org.springframework.security.oauth2.server.resource.authentication.JwtIssuerAuthenticationManagerResolver;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Component;
 
-
-import java.io.Serial;
-import java.net.URL;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
-import java.util.stream.Collectors;
-
 
 @EnableWebSecurity
 @EnableMethodSecurity
 @Configuration
 public class SecurityConfiguration {
-
     @Bean
     SecurityFilterChain filterChain(
             HttpSecurity http,
@@ -103,7 +76,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    static MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
-        return new IkaritaSecurityExpressionHandler(CommunityMethodSecurityExpressionRoot::new);
+    static MethodSecurityExpressionHandler methodSecurityExpressionHandler(UserSecurityService userSecurityService) {
+        return new IkaritaSecurityExpressionHandler(CommunityMethodSecurityExpressionRoot::new, userSecurityService);
     }
 }

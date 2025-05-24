@@ -16,7 +16,7 @@
 	<properties>
 		<java.version>24</java.version>
 		<guava.version>33.4.8-jre</guava.version>
-		<hibernate.version>7.0.0.CR2</hibernate.version>
+		<hibernate.version>6.6.15.Final</hibernate.version>
 		<jsonschemavalidator.version>1.5.6</jsonschemavalidator.version>
 		<jwt.version>4.5.0</jwt.version>
 		<mapstruct.version>1.6.3</mapstruct.version>

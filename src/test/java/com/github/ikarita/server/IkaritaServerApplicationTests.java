@@ -5,8 +5,8 @@ import com.github.ikarita.server.api.community.CommunityRoleController;
 import com.github.ikarita.server.api.user.DataUserController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,7 +18,7 @@ class IkaritaServerApplicationTests extends AbstractIntegrationTest {
 	@Autowired
     DataUserController dataUserController;
 
-	@MockBean
+	@MockitoBean
 	private JwtDecoder jwtDecoder;
 
 	@Test
