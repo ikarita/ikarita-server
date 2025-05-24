@@ -56,7 +56,7 @@ public class SecurityConfiguration {
             http.requiresChannel(channel -> channel.anyRequest().requiresSecure());
         }
 
-        http.authorizeHttpRequests(requests -> requests
+        http.securityMatcher("/**").authorizeHttpRequests(requests -> requests
                 .requestMatchers(Stream.of(permitAll).map(AntPathRequestMatcher::new).toArray(AntPathRequestMatcher[]::new)).permitAll()
                 .anyRequest().authenticated());
 

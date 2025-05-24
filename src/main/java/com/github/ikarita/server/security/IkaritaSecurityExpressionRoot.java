@@ -21,7 +21,7 @@ public class IkaritaSecurityExpressionRoot extends SecurityExpressionRoot implem
 
     @SuppressWarnings("unchecked")
     protected <T extends Authentication> Optional<T> get(Class<T> expectedAuthType) {
-        return Optional.ofNullable(getAuthentication()).map(a -> a.getClass().isAssignableFrom(expectedAuthType) ? (T) a : null).flatMap(Optional::ofNullable);
+        return Optional.ofNullable(getAuthentication()).map(a -> a.getClass().isAssignableFrom(expectedAuthType) ? (T) a : null);
     }
 
     @Override
