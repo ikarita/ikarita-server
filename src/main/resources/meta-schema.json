@@ -1,44 +1,26 @@
 {
-  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
-  "properties": {
-    "$schema": {
-      "$ref": "#/$defs/uri"
+  "patternProperties": {
+    "^\\$schema$": {
+      "type": "string",
+      "pattern": "https://json-schema.org/draft/2020-12/schema"
     },
-    "$id": {
-      "$ref": "#/$defs/uri"
+    "^type$": {
+      "type": "string",
+      "pattern": "object"
     },
-    "definition": {
+    "^\\$id$": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^(https?|http?)://"
+    },
+    "^definition$": {
       "type": "string"
     },
-    "type": {
-      "const": "object"
-    },
-    "properties": {
+    "^properties$": {
       "description": "Validates string related attributes",
-      "type": "object",
-      "properties": {
-        "enum": [
-          {
-            "$ref": "#/$defs/string-schema"
-          },
-          {
-            "$ref": "#/$defs/boolean-schema"
-          },
-          {
-            "$ref": "#/$defs/number-schema"
-          },
-          {
-            "$ref": "#/$defs/choice-schema"
-          },
-          {
-            "$ref": "#/$defs/group-schema"
-          }
-        ]
-      },
-      "propertyNames": {
-        "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
-      }
+      "type": "object"
     }
   },
   "required": [
@@ -52,14 +34,22 @@
     },
     "string-schema": {
       "type": "object",
-      "properties": {
-        "type": {
-          "const": "string"
+      "patternProperties": {
+        "^type": {
+          "type": "string",
+          "pattern": "string"
         },
-        "minLength": "integer",
-        "maxLength": "integer",
-        "pattern": "string",
-        "format": {
+        "^minLength$": {
+          "type": "integer"
+        },
+        "^maxLength$": {
+          "type": "integer"
+        },
+        "^pattern$": {
+          "type": "string"
+        },
+        "^format$": {
+          "type": "string",
           "enum": [
             "date-time",
             "time",
@@ -89,9 +79,10 @@
     },
     "boolean-schema": {
       "type": "object",
-      "properties": {
-        "type": {
-          "const": "boolean"
+      "patternProperties": {
+        "^type": {
+          "type": "string",
+          "pattern": "boolean"
         }
       },
       "required": [
@@ -100,18 +91,29 @@
     },
     "number-schema": {
       "type": "object",
-      "properties": {
-        "type": {
+      "patternProperties": {
+        "^type$": {
+          "type": "string",
           "enum": [
             "integer",
             "number"
           ]
         },
-        "multipleOf": "integer",
-        "minimum": "number",
-        "exclusiveMinimum": "number",
-        "maximum": "number",
-        "exclusiveMaximum": "number"
+        "^multipleOf$": {
+          "type": "integer"
+        },
+        "^minimum$": {
+          "type": "integer"
+        },
+        "^exclusiveMinimum$": {
+          "type": "integer"
+        },
+        "^maximum$": {
+          "type": "integer"
+        },
+        "^exclusiveMaximum$": {
+          "type": "integer"
+        }
       },
       "required": [
         "type"
@@ -119,9 +121,10 @@
     },
     "choice-schema": {
       "type": "object",
-      "properties": {
-        "type": {
-          "const": "array"
+      "patternProperties": {
+        "^type$": {
+          "type": "string",
+          "pattern": "array"
         }
       },
       "required": [
@@ -130,9 +133,10 @@
     },
     "group-schema": {
       "type": "object",
-      "properties": {
-        "type": {
-          "const": "object"
+      "patternProperties": {
+        "^type$": {
+          "type": "string",
+          "pattern": "object"
         }
       },
       "required": [

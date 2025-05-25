@@ -21,7 +21,7 @@ public class SchemaConfiguration {
     JsonSchema metaSchema() throws IOException {
         final Resource resource = resourceLoader.getResource("classpath:meta-schema.json");
         try(InputStream resourceAsStream = resource.getInputStream()){
-            final JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V201909);
+            final JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012);
             return factory.getSchema(resourceAsStream);
         }
     }

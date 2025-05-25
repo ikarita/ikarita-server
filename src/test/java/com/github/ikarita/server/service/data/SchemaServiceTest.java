@@ -37,7 +37,7 @@ class SchemaServiceTest {
 
         final Set<ValidationMessage> errors = schemaService.validate(jsonContent);
         assertEquals(1, errors.size());
-        assertTrue(errors.iterator().next().getMessage().startsWith("$.$schema: does not match the uri pattern"));
+        assertTrue(errors.iterator().next().getMessage().startsWith("$.$schema: does not match the regex pattern https://json-schema.org/draft/2020-12/schema"));
 
     }
 
@@ -55,7 +55,7 @@ class SchemaServiceTest {
 
         final Set<ValidationMessage> errors = schemaService.validate(jsonContent);
         assertEquals(1, errors.size());
-        assertTrue(errors.iterator().next().getMessage().startsWith("$.$id: does not match the uri pattern"));
+        assertTrue(errors.iterator().next().getMessage().startsWith("$.$id: does not match the regex pattern ^(https?|http?)://"));
     }
 
     @Test
@@ -72,14 +72,14 @@ class SchemaServiceTest {
 
         final Set<ValidationMessage> errors = schemaService.validate(jsonContent);
         assertEquals(1, errors.size());
-        assertTrue(errors.iterator().next().getMessage().startsWith("$.type: must be a constant value object"));
+        assertTrue(errors.iterator().next().getMessage().startsWith("$.type: does not match the regex pattern object"));
     }
 
     @Test
     void testSimpleSchema() throws JsonProcessingException {
         final String simpleSchema = """
                 {
-                    "$schema": "https://json-schema.org/draft/2019-09/schema",
+                    "$schema": "https://json-schema.org/draft/2020-12/schema",
                     "$id": "https://ikarita.org/shemas/001",
                     "type": "object",
                     "properties": {
@@ -97,7 +97,7 @@ class SchemaServiceTest {
     void testTwoBoolSchema() throws JsonProcessingException {
         final String simpleSchema = """
                 {
-                    "$schema": "https://json-schema.org/draft/2019-09/schema",
+                    "$schema": "https://json-schema.org/draft/2020-12/schema",
                     "$id": "https://ikarita.org/shemas/001",
                     "type": "object",
                     "properties": {
@@ -118,7 +118,7 @@ class SchemaServiceTest {
     void testTwoIdenticalPropertiesSchema() {
         final String simpleSchema = """
                 {
-                    "$schema": "https://json-schema.org/draft/2019-09/schema",
+                    "$schema": "https://json-schema.org/draft/2020-12/schema",
                     "$id": "https://ikarita.org/shemas/001",
                     "type": "object",
                     "properties": {
@@ -138,7 +138,7 @@ class SchemaServiceTest {
     void testNoPropertySchema() throws JsonProcessingException {
         final String simpleSchema = """
                 {
-                    "$schema": "https://json-schema.org/draft/2019-09/schema",
+                    "$schema": "https://json-schema.org/draft/2020-12/schema",
                     "$id": "https://ikarita.org/shemas/001",
                     "type": "object",
                     "properties": {
@@ -153,7 +153,7 @@ class SchemaServiceTest {
     void testBooleanPassing() throws JsonProcessingException {
         final String simpleSchema = """
                 {
-                    "$schema": "https://json-schema.org/draft/2019-09/schema",
+                    "$schema": "https://json-schema.org/draft/2020-12/schema",
                     "$id": "https://ikarita.org/shemas/001",
                     "type": "object",
                     "properties": {
@@ -176,7 +176,7 @@ class SchemaServiceTest {
     void testBooleanFailing() throws JsonProcessingException {
         final String simpleSchema = """
                 {
-                    "$schema": "https://json-schema.org/draft/2019-09/schema",
+                    "$schema": "https://json-schema.org/draft/2020-12/schema",
                     "$id": "https://ikarita.org/shemas/001",
                     "type": "object",
                     "properties": {
@@ -200,7 +200,7 @@ class SchemaServiceTest {
     void testBasicTypePropertiesSchema() throws JsonProcessingException {
         final String simpleSchema = """
                 {
-                    "$schema": "https://json-schema.org/draft/2019-09/schema",
+                    "$schema": "https://json-schema.org/draft/2020-12/schema",
                     "$id": "https://ikarita.org/shemas/001",
                     "type": "object",
                     "properties": {

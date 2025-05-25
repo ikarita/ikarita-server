@@ -31,7 +31,7 @@ public class SchemaServiceImpl implements SchemaService{
 
     @Override
     public Set<ValidationMessage> validate( String schema,String object) throws JsonProcessingException {
-        final JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V201909);
+        final JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012);
         JsonSchema jsonSchema  = factory.getSchema(schema);
         final JsonNode json = mapper.readTree(object);
         return jsonSchema.validate(json);
