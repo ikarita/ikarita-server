@@ -20,7 +20,25 @@
     },
     "^properties$": {
       "description": "Validates string related attributes",
-      "type": "object"
+      "type": "object",
+      "patternProperties": {
+        "": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/boolean-schema"
+            },
+            {
+              "$ref": "#/$defs/string-schema"
+            },
+            {
+              "$ref": "#/$defs/number-schema"
+            }
+          ]
+        }
+      }
+    },
+    "propertyNames": {
+      "pattern": "^[A-Za-z][A-Za-z0-9_\\-]*$"
     }
   },
   "required": [

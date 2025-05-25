@@ -115,6 +115,24 @@ class SchemaServiceTest {
     }
 
     @Test
+    void testWrongPropertySchema() throws JsonProcessingException {
+        final String simpleSchema = """
+                {
+                    "$schema": "https://json-schema.org/draft/2020-12/schema",
+                    "$id": "https://ikarita.org/shemas/001",
+                    "type": "object",
+                    "properties": {
+                        "boolean-property": {
+                            "type" :"unknown"
+                        }
+                    }
+                }""";
+
+        final Set<ValidationMessage> errors = schemaService.validate(simpleSchema);
+        assertFalse(errors.isEmpty());
+    }
+
+    @Test
     void testTwoIdenticalPropertiesSchema() {
         final String simpleSchema = """
                 {
