@@ -1,5 +1,6 @@
 package com.github.ikarita.server;
 
+import dasniko.testcontainers.keycloak.KeycloakContainer;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,10 +18,12 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @ContextConfiguration(initializers = AbstractIntegrationTest.DataSourceInitializer.class)
 @Testcontainers
 public abstract class AbstractIntegrationTest {
-    public static PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:14.2");
+    public static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:14.2");
+    public static KeycloakContainer keycloak = new KeycloakContainer("quay.io/keycloak/keycloak:26.2");
 
     static {
-        container.start();
+        postgres.start();
+        keycloak.start();
     }
 
     public static class DataSourceInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
@@ -30,9 +33,10 @@ public abstract class AbstractIntegrationTest {
 
             TestPropertySourceUtils.addInlinedPropertiesToEnvironment(
                     applicationContext,
-                    "spring.datasource.url=" + container.getJdbcUrl(),
-                    "spring.datasource.username=" + container.getUsername(),
-                    "spring.datasource.password=" + container.getPassword()
+                    "spring.datasource.url=" + postgres.getJdbcUrl(),
+                    "spring.datasource.username=" + postgres.getUsername(),
+                    "spring.datasource.password=" + postgres.getPassword(),
+                    "spring.security.oauth2.resourceserver.jwt.issuer-uri=" + keycloak.getAuthServerUrl()
             );
         }
     }
