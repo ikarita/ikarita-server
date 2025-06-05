@@ -27,8 +27,7 @@ public class SecurityConfiguration {
     SecurityFilterChain filterChain(
             HttpSecurity http,
             ServerProperties serverProperties,
-            @Value("${origins:[]}") String[] origins,
-            @Value("${permit-all:[]}") String[] permitAll)
+            @Value("${origins:[]}") String[] origins)
             throws Exception {
 
         // Enable and configure CORS
