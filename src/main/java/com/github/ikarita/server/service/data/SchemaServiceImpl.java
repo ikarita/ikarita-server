@@ -20,12 +20,12 @@ public class SchemaServiceImpl implements SchemaService{
     }
 
     @Override
-    public List<Error> validate(String jsonSchema) throws JsonProcessingException {
+    public List<Error> validate(String jsonSchema) {
         return metaSchema.validate(jsonSchema, InputFormat.JSON);
     }
 
     @Override
-    public List<Error> validate(String jsonSchema, String object) throws JsonProcessingException {
+    public List<Error> validate(String jsonSchema, String object) {
         final SchemaRegistry schemaRegistry = SchemaRegistry.withDialect(Dialects.getDraft202012(),
                 builder -> builder.nodeReader(DefaultNodeReader.Builder::locationAware));
         final Schema schema = schemaRegistry.getSchema(jsonSchema, InputFormat.JSON);
