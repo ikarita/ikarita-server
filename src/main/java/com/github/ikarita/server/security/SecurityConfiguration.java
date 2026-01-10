@@ -2,7 +2,6 @@ package com.github.ikarita.server.security;
 
 import com.github.ikarita.server.service.user.UserSecurityService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -14,13 +13,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -29,7 +26,6 @@ public class SecurityConfiguration {
     @Bean
     SecurityFilterChain filterChain(
             HttpSecurity http,
-            ServerProperties serverProperties,
             @Value("${origins:[]}") String[] origins,
             @Value("${permit-all:[]}") String[] permitAll)
             throws Exception {
@@ -51,14 +47,9 @@ public class SecurityConfiguration {
             response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
         }));
 
-        // If SSL enabled, disable http (https only)
-        if (serverProperties.getSsl() != null && serverProperties.getSsl().isEnabled()) {
-            http.requiresChannel(channel -> channel.anyRequest().requiresSecure());
-        }
-
-        http.securityMatcher("/**").authorizeHttpRequests(requests -> requests
-                .requestMatchers(Stream.of(permitAll).map(AntPathRequestMatcher::new).toArray(AntPathRequestMatcher[]::new)).permitAll()
-                .anyRequest().authenticated());
+//        http.securityMatcher("/**").authorizeHttpRequests(requests -> requests
+//                .requestMatchers(Stream.of(permitAll).map(AntPathRequestMatcher::new).toArray(AntPathRequestMatcher[]::new)).permitAll()
+//                .anyRequest().authenticated());
 
         return http.build();
     }

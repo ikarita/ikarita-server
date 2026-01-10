@@ -4,9 +4,10 @@
 
 API server for the Ikarita project that allows authentication and access to resources.
 
-# Requirements
+## Requirements
 
-- Java JDK 21
+- Maven 3.6.1
+- Java JDK 25
 - Podman >= 5.5.2
 
 ## Prepare Podman for testcontainers
@@ -24,7 +25,7 @@ export DOCKER_HOST="unix:///run/user/$UID/podman/podman.sock"
 export TESTCONTAINERS_RYUK_DISABLED=true
 ```
 
-# Build Artefact
+## Build Artefact
 
 The server relies on the existence of Postgres database.
 
@@ -63,5 +64,13 @@ podman build --format docker -t ikarita-server .
 
 ## API
 
-The [API Documentation](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/ikarita/ikarita-server-api/dev/openapi.json) 
-is available through the Open API format V3.
+The [API Documentation](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/ikarita/ikarita-server-api/dev/openapi.json) is available through the Open API format V3.
+
+## Check for the latest versions
+
+Displays all dependencies that have newer versions available. It will also display dependencies which are used by a 
+plugin or defined in the plugin within a pluginManagement.
+
+```shell
+mvn versions:display-dependency-updates
+```

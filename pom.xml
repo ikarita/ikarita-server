@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.3</version>
+		<version>4.0.1</version>
 		<relativePath/>
 	</parent>
 	<groupId>com.github.ikarita</groupId>
@@ -14,16 +14,14 @@
 	<name>ikarita-server</name>
 	<description>Backend for Ikarita</description>
 	<properties>
-		<java.version>21</java.version>
-		<guava.version>33.4.8-jre</guava.version>
-		<hibernate.version>6.6.15.Final</hibernate.version>
-		<jsonschemavalidator.version>1.5.8</jsonschemavalidator.version>
-		<jsonschemavalidator.version>1.5.8</jsonschemavalidator.version>
+		<guava.version>33.5.0-jre</guava.version>
+		<hibernate.version>7.2.0.Final</hibernate.version>
+		<jsonschemavalidator.version>3.0.0</jsonschemavalidator.version>
 		<jwt.version>4.5.0</jwt.version>
 		<mapstruct.version>1.6.3</mapstruct.version>
 		<openapi.version>1.8.0</openapi.version>
-		<testcontainers.version>1.21.3</testcontainers.version>
-		<spring.addons.starter.oidc.version>8.1.18</spring.addons.starter.oidc.version>
+		<testcontainers.version>1.21.4</testcontainers.version>
+		<spring.addons.starter.oidc.version>9.1.0</spring.addons.starter.oidc.version>
 	</properties>
 	<dependencies>
 		<dependency>

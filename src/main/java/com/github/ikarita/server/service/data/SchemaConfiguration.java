@@ -1,8 +1,10 @@
 package com.github.ikarita.server.service.data;
 
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.JsonSchemaFactory;
-import com.networknt.schema.SpecVersion;
+import com.networknt.schema.InputFormat;
+import com.networknt.schema.Schema;
+import com.networknt.schema.SchemaRegistry;
+import com.networknt.schema.dialect.Dialects;
+import com.networknt.schema.serialization.DefaultNodeReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,11 +20,13 @@ public class SchemaConfiguration {
     private final ResourceLoader resourceLoader;
 
     @Bean
-    JsonSchema metaSchema() throws IOException {
+    Schema metaSchema() throws IOException {
         final Resource resource = resourceLoader.getResource("classpath:meta-schema.json");
         try(InputStream resourceAsStream = resource.getInputStream()){
-            final JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012);
-            return factory.getSchema(resourceAsStream);
+            final SchemaRegistry schemaRegistry = SchemaRegistry.withDialect(Dialects.getDraft202012(),
+                    builder -> builder.nodeReader(DefaultNodeReader.Builder::locationAware));
+
+            return schemaRegistry.getSchema(resourceAsStream, InputFormat.JSON);
         }
     }
 }
