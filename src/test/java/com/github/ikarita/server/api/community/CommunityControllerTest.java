@@ -1,6 +1,5 @@
 package com.github.ikarita.server.api.community;
 
-import com.c4_soft.springaddons.security.oauth2.test.annotations.WithMockAuthentication;
 import com.github.ikarita.server.model.dto.community.CommunityDto;
 import com.github.ikarita.server.model.dto.community.NewCommunityDto;
 import com.github.ikarita.server.repository.community.CommunityRepository;
@@ -8,14 +7,14 @@ import com.github.ikarita.server.repository.user.CommunityUserRepository;
 import com.github.ikarita.server.repository.user.UserRepository;
 import com.github.ikarita.server.security.SecurityConfiguration;
 import com.github.ikarita.server.service.community.CommunityService;
-import com.github.ikarita.server.service.user.UserSecurityService;
 import com.github.ikarita.server.service.user.UserSecurityServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,8 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CommunityControllerTest {
     @Autowired
     MockMvc mockMvc;
-    @Autowired
-    private UserSecurityService userSecurityService;
     @MockitoBean
     private CommunityService communityService;
     @MockitoBean
@@ -55,7 +52,7 @@ class CommunityControllerTest {
     }
 
     @Test
-    @WithMockAuthentication(authorities = { "ANY" })
+    @WithMockUser(roles = { "ANY" })
     void testGetCommunitiesWithAuthenticationIsOk() throws Exception {
         final CommunityDto community1 = new CommunityDto(1L, "Community 1", true);
         final CommunityDto community2 = new CommunityDto(2L, "Community 2", true);
@@ -66,7 +63,7 @@ class CommunityControllerTest {
     }
 
     @Test
-    @WithMockAuthentication(authorities = { "WRONG" })
+    @WithMockUser(roles = { "WRONG" })
     void testPostCommunityWithWrongAuthorityIsForbidden() throws Exception {
         final NewCommunityDto newCommunityDto = new NewCommunityDto("Community 1", true);
 
@@ -83,23 +80,27 @@ class CommunityControllerTest {
     }
 
     @Test
-    @WithMockAuthentication(authorities = { "COMMUNITY_CREATE" })
+    @WithMockUser(roles = { "COMMUNITY_CREATE" })
     void testPostCommunityDeactivate() throws Exception {
         mockMvc.perform(post("/api/v1/communities/deactivate/1"))
                 .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockAuthentication(authorities = { "COMMUNITY_CREATE" })
+    @WithMockUser(roles = { "COMMUNITY_CREATE" })
     void testPostCommunityWithContributorIsForbidden() throws Exception {
         final NewCommunityDto newCommunityDto = new NewCommunityDto("Community 1", true);
 
-        mockMvc.perform(post("/api/v1/communities").contentType(MediaType.APPLICATION_JSON).content(toJson(newCommunityDto)))
-                .andExpect(status().isCreated());
+        mockMvc.perform(
+                post("/api/v1/communities")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(toJson(newCommunityDto)))
+                .andExpect(status().isCreated()
+                );
     }
 
     @Test
-    @WithMockAuthentication("COMMUNITY_CREATE")
+    @WithMockUser(roles = { "COMMUNITY_CREATE" })
     void testPostCommunityWithAuthenticationIsOk() throws Exception {
         final NewCommunityDto newCommunityDto = new NewCommunityDto("Community 1", true);
         final CommunityDto communityDto = new CommunityDto(1L, "Community 1", true);

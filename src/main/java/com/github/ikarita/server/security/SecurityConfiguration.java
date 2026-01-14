@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,11 +14,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -26,8 +30,8 @@ public class SecurityConfiguration {
     @Bean
     SecurityFilterChain filterChain(
             HttpSecurity http,
-            @Value("${origins:[]}") String[] origins,
-            @Value("${permit-all:[]}") String[] permitAll)
+            @Value("${origins:}") String[] origins,
+            @Value("${permit-all:}") String[] permitAll)
             throws Exception {
 
         //http.oauth2ResourceServer(oauth2 -> oauth2.authenticationManagerResolver(authenticationManagerResolver));
@@ -47,11 +51,22 @@ public class SecurityConfiguration {
             response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
         }));
 
-//        http.securityMatcher("/**").authorizeHttpRequests(requests -> requests
-//                .requestMatchers(Stream.of(permitAll).map(AntPathRequestMatcher::new).toArray(AntPathRequestMatcher[]::new)).permitAll()
-//                .anyRequest().authenticated());
+        allowedMatchers(http, permitAll);
 
         return http.build();
+    }
+
+    private void allowedMatchers(HttpSecurity http, String[] permitAll) {
+        final RequestMatcher[] matchers = Stream.of(permitAll)
+                .map(path -> PathPatternRequestMatcher.withDefaults().matcher(path))
+                .toArray(RequestMatcher[]::new);
+
+        http.authorizeHttpRequests((authorize) -> {
+            if (matchers.length > 0) {
+                authorize.requestMatchers(matchers).permitAll();
+            }
+            authorize.anyRequest().authenticated();
+        });
     }
 
     private UrlBasedCorsConfigurationSource corsConfigurationSource(String[] origins) {
@@ -66,8 +81,14 @@ public class SecurityConfiguration {
         return source;
     }
 
+    @Bean IkaritaPermissionEvaluator permissionEvaluator(UserSecurityService userSecurityService) {
+        return new IkaritaPermissionEvaluator(userSecurityService);
+    }
+
     @Bean
-    static MethodSecurityExpressionHandler methodSecurityExpressionHandler(UserSecurityService userSecurityService) {
-        return new IkaritaSecurityExpressionHandler(CommunityMethodSecurityExpressionRoot::new, userSecurityService);
+    static MethodSecurityExpressionHandler methodSecurityExpressionHandler(IkaritaPermissionEvaluator permissionEvaluator) {
+        final DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
+        expressionHandler.setPermissionEvaluator(permissionEvaluator);
+        return expressionHandler;
     }
 }

@@ -2,16 +2,15 @@ package com.github.ikarita.server.service.data;
 
 import com.github.ikarita.server.Utils;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,27 +24,28 @@ class SchemaServiceTest {
     @Test
     void testEmpty() throws JsonProcessingException {
         final String jsonContent = "{}";
-        final Set<ValidationMessage> errors = schemaService.validate(jsonContent);
+        final List<Error> errors = schemaService.validate(jsonContent);
         assertEquals(2, errors.size());
-        assertTrue(errors.stream().anyMatch(e -> e.getMessage().equals("$: required property '$schema' not found")));
-        assertTrue(errors.stream().anyMatch(e -> e.getMessage().equals("$: required property 'type' not found")));
+        assertTrue(errors.stream().anyMatch(e -> e.getMessage().equals("required property '$schema' not found")));
+        assertTrue(errors.stream().anyMatch(e -> e.getMessage().equals("required property 'type' not found")));
     }
 
     @Test
     void testWrongSchema() throws JsonProcessingException {
         final String jsonContent = Utils.getFileContentFail("schema/wrong_schema.json");
 
-        final Set<ValidationMessage> errors = schemaService.validate(jsonContent);
+        final var errors = schemaService.validate(jsonContent);
         assertEquals(1, errors.size());
-        assertTrue(errors.iterator().next().getMessage().startsWith("$.$schema: does not match the regex pattern https://json-schema.org/draft/2020-12/schema"));
-
+        final var error = errors.getFirst();
+        assertEquals("does not match the regex pattern https://json-schema.org/draft/2020-12/schema", error.getMessage());
+        assertEquals("/$schema", error.getInstanceLocation().toString());
     }
 
     @Test
     void testRightSchema() throws JsonProcessingException {
         final String jsonContent = Utils.getFileContentFail("schema/right_schema.json");
 
-        final Set<ValidationMessage> errors = schemaService.validate(jsonContent);
+        final List<Error> errors = schemaService.validate(jsonContent);
         assertEquals(0, errors.size());
     }
 
@@ -53,31 +53,35 @@ class SchemaServiceTest {
     void testWrongId() throws JsonProcessingException {
         final String jsonContent = Utils.getFileContentFail("schema/wrong_id.json");
 
-        final Set<ValidationMessage> errors = schemaService.validate(jsonContent);
+        final List<Error> errors = schemaService.validate(jsonContent);
         assertEquals(1, errors.size());
-        assertTrue(errors.iterator().next().getMessage().startsWith("$.$id: does not match the regex pattern ^(https?|http?)://"));
+        final Error error = errors.getFirst();
+        assertEquals("does not match the regex pattern ^(https?|http?)://", error.getMessage());
+        assertEquals("/$id", error.getInstanceLocation().toString());
     }
 
     @Test
     void testRightId() throws JsonProcessingException {
-        final String jsonContent = Utils.getFileContentFail("schema/right_id.json");
+        final var jsonContent = Utils.getFileContentFail("schema/right_id.json");
 
-        final Set<ValidationMessage> errors = schemaService.validate(jsonContent);
+        final var errors = schemaService.validate(jsonContent);
         assertEquals(0, errors.size());
     }
 
     @Test
     void testWrongType() throws JsonProcessingException {
-        final String jsonContent = Utils.getFileContentFail("schema/wrong_type.json");
+        final var jsonContent = Utils.getFileContentFail("schema/wrong_type.json");
 
-        final Set<ValidationMessage> errors = schemaService.validate(jsonContent);
+        final var errors = schemaService.validate(jsonContent);
         assertEquals(1, errors.size());
-        assertTrue(errors.iterator().next().getMessage().startsWith("$.type: does not match the regex pattern object"));
+        final var error = errors.getFirst();
+        assertEquals("does not match the regex pattern object", error.getMessage());
+        assertEquals("/type", error.getInstanceLocation().toString());
     }
 
     @Test
     void testSimpleSchema() throws JsonProcessingException {
-        final String simpleSchema = """
+        final var simpleSchema = """
                 {
                     "$schema": "https://json-schema.org/draft/2020-12/schema",
                     "$id": "https://ikarita.org/shemas/001",
@@ -89,7 +93,7 @@ class SchemaServiceTest {
                     }
                 }""";
 
-        final Set<ValidationMessage> errors = schemaService.validate(simpleSchema);
+        final List<Error> errors = schemaService.validate(simpleSchema);
         assertEquals(0, errors.size());
     }
 
@@ -110,7 +114,7 @@ class SchemaServiceTest {
                     }
                 }""";
 
-        final Set<ValidationMessage> errors = schemaService.validate(simpleSchema);
+        final List<Error> errors = schemaService.validate(simpleSchema);
         assertEquals(0, errors.size());
     }
 
@@ -128,12 +132,12 @@ class SchemaServiceTest {
                     }
                 }""";
 
-        final Set<ValidationMessage> errors = schemaService.validate(simpleSchema);
+        final List<Error> errors = schemaService.validate(simpleSchema);
         assertFalse(errors.isEmpty());
     }
 
     @Test
-    void testTwoIdenticalPropertiesSchema() {
+    void testTwoIdenticalPropertiesSchema() throws JsonProcessingException {
         final String simpleSchema = """
                 {
                     "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -149,7 +153,7 @@ class SchemaServiceTest {
                     }
                 }""";
 
-        assertThrows(JsonParseException.class, () -> schemaService.validate(simpleSchema));
+        schemaService.validate(simpleSchema);
     }
 
     @Test
@@ -163,7 +167,7 @@ class SchemaServiceTest {
                     }
                 }""";
 
-        final Set<ValidationMessage> errors = schemaService.validate(simpleSchema);
+        final List<Error> errors = schemaService.validate(simpleSchema);
         assertEquals(0, errors.size());
     }
 
@@ -186,7 +190,7 @@ class SchemaServiceTest {
                     "boolean-property": true
                 }""";
 
-        final Set<ValidationMessage> errors = schemaService.validate(simpleSchema, simpleObject);
+        final List<Error> errors = schemaService.validate(simpleSchema, simpleObject);
         assertEquals(0, errors.size());
     }
 
@@ -209,9 +213,11 @@ class SchemaServiceTest {
                     "boolean-property": "string"
                 }""";
 
-        final Set<ValidationMessage> errors = schemaService.validate(simpleSchema, simpleObject);
+        final List<Error> errors = schemaService.validate(simpleSchema, simpleObject);
         assertEquals(1, errors.size());
-        assertEquals("$.boolean-property: string found, boolean expected", errors.iterator().next().getMessage());
+        final var error = errors.getFirst();
+        assertEquals("string found, boolean expected", error.getMessage());
+        assertEquals("/boolean-property", error.getInstanceLocation().toString());
     }
 
     @Test
@@ -237,8 +243,7 @@ class SchemaServiceTest {
                     }
                 }""";
 
-        final Set<ValidationMessage> errors = schemaService.validate(simpleSchema);
+        final List<Error> errors = schemaService.validate(simpleSchema);
         assertEquals(0, errors.size());
-
     }
 }

@@ -14,6 +14,9 @@
 	<name>ikarita-server</name>
 	<description>Backend for Ikarita</description>
 	<properties>
+		<java.version>25</java.version>
+		<maven.compiler.source>25</maven.compiler.source>
+		<maven.compiler.target>25</maven.compiler.target>
 		<guava.version>33.5.0-jre</guava.version>
 		<hibernate.version>7.2.0.Final</hibernate.version>
 		<jsonschemavalidator.version>3.0.0</jsonschemavalidator.version>
@@ -39,7 +42,17 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
+			<artifactId>spring-boot-starter-jdbc-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -163,6 +176,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
+					<source>25</source>
+					<target>25</target>
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.springframework.boot</groupId>
