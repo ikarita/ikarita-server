@@ -41,8 +41,7 @@ class DataUserControllerTest {
     @Test
     @WithMockUser(roles = { "WRONG" })
     void testGetCommunityWithWrongAuthenticationIsUnauthorized() throws Exception {
-        CommunitySimpleDto communitySimpleDto = new CommunitySimpleDto(1L, "Cool Kids");
-        NewCommunityRoleDto roleDto = new NewCommunityRoleDto("exploited", communitySimpleDto);
+        final CommunitySimpleDto communitySimpleDto = new CommunitySimpleDto(1L, "Cool Kids");
         mockMvc.perform(post("/api/v1/community/roles").contentType(MediaType.APPLICATION_JSON).content(toJson(communitySimpleDto)))
                 .andExpect(status().isUnauthorized());
     }

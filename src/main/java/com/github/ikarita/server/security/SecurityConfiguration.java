@@ -32,8 +32,7 @@ public class SecurityConfiguration {
     SecurityFilterChain filterChain(
             HttpSecurity http,
             @Value("${origins:}") String[] origins,
-            @Value("${permit-all:}") String[] permitAll)
-            throws Exception {
+            @Value("${permit-all:}") String[] permitAll) {
 
         http.oauth2ResourceServer((oauth2) -> oauth2
                 .jwt(Customizer.withDefaults())
