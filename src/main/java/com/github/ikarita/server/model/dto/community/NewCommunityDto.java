@@ -1,5 +1,6 @@
 package com.github.ikarita.server.model.dto.community;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,5 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class NewCommunityDto {
     private String name;
+    @JsonProperty("public")
     private boolean isPublic;
 }

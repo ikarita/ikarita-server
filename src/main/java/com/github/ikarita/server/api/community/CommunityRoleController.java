@@ -22,7 +22,7 @@ import static com.github.ikarita.server.api.ApiUtils.jsonHeader;
 public class CommunityRoleController {
     private final CommunityRoleService communityRoleService;
 
-    @PreAuthorize("hasAuthority('COMMUNITY_ROLE')")
+    @PreAuthorize("hasRole('COMMUNITY_ROLE')")
     @PostMapping(produces = "application/json")
     @Operation(
             tags = {"Communities"},

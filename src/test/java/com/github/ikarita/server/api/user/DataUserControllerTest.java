@@ -1,6 +1,5 @@
 package com.github.ikarita.server.api.user;
 
-import com.c4_soft.springaddons.security.oauth2.test.annotations.WithMockAuthentication;
 import com.github.ikarita.server.api.community.CommunityRoleController;
 import com.github.ikarita.server.model.dto.community.CommunitySimpleDto;
 import com.github.ikarita.server.model.dto.community.NewCommunityRoleDto;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
@@ -39,12 +39,12 @@ class DataUserControllerTest {
     }
 
     @Test
-    @WithMockAuthentication(authorities = { "WRONG" })
+    @WithMockUser(roles = { "WRONG" })
     void testGetCommunityWithWrongAuthenticationIsUnauthorized() throws Exception {
         CommunitySimpleDto communitySimpleDto = new CommunitySimpleDto(1L, "Cool Kids");
         NewCommunityRoleDto roleDto = new NewCommunityRoleDto("exploited", communitySimpleDto);
         mockMvc.perform(post("/api/v1/community/roles").contentType(MediaType.APPLICATION_JSON).content(toJson(communitySimpleDto)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     private byte[] toJson(Object dto) throws JsonProcessingException {

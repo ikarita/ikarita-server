@@ -65,7 +65,7 @@ public class CommunityController {
                 .body(communityDto);
     }
 
-    @PreAuthorize("hasAuthority('COMMUNITY_CREATE')")
+    @PreAuthorize("hasRole('COMMUNITY_CREATE')")
     @PostMapping(produces = "application/json")
     @Operation(
             tags = {"Communities"},

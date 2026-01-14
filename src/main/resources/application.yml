@@ -1,3 +1,6 @@
+server:
+  port: ${SERVER_PORT:8080}
+
 logging:
   level:
     org.springframework.security: INFO
@@ -25,27 +28,19 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://${ISSUER_URI_ADDRESS:localhost:8089}/auth/realms/ikarita
+          jwk-set-uri: http://${ISSUER_URI_ADDRESS:localhost:8089}/realms/springboot-realm/protocol/openid-connect/certs}
+          audience: ${KEYCLOAK_AUDIENCE:ikarita}
 
-com:
-  c4-soft:
-    springaddons:
-      oidc:
-        ops:
-          - iss: http://${ISSUER_URI_ADDRESS:localhost:8089}/auth/realms/ikarita
-            username-claim: preferred_username
-            authorities:
-              - path: $.realm_access.roles
-                prefix: ROLE_
-              - path: $.resource_access.*.roles
-        resourceserver:
-          cors:
-            - path: /**
-              allowed-origin-patterns: ${origins}
-          permit-all:
-            - "/actuator/health/readiness"
-            - "/actuator/health/liveness"
-            - "/v3/api-docs/**"
 
 springdoc:
   swagger-ui:
     enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized

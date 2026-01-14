@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,7 +35,9 @@ public class SecurityConfiguration {
             @Value("${permit-all:}") String[] permitAll)
             throws Exception {
 
-        //http.oauth2ResourceServer(oauth2 -> oauth2.authenticationManagerResolver(authenticationManagerResolver));
+        http.oauth2ResourceServer((oauth2) -> oauth2
+                .jwt(Customizer.withDefaults())
+        );
 
         // Enable and configure CORS
         http.cors(cors -> cors.configurationSource(corsConfigurationSource(origins)));
@@ -46,10 +49,16 @@ public class SecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable);
 
         // Return 401 (unauthorized) instead of 302 (redirect to login) when authorization is missing or invalid
-        http.exceptionHandling(eh -> eh.authenticationEntryPoint((request, response, authException) -> {
-            response.addHeader(HttpHeaders.WWW_AUTHENTICATE, "Bearer realm=\"Restricted Content\"");
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
-        }));
+        // Return 403 (forbidden) when permission evaluation fails
+        http.exceptionHandling(eh -> eh
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.addHeader(HttpHeaders.WWW_AUTHENTICATE, "Bearer realm=\"Restricted Content\"");
+                    response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
+                })
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    response.sendError(HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN.getReasonPhrase());
+                })
+        );
 
         allowedMatchers(http, permitAll);
 
