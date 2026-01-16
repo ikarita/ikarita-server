@@ -1,0 +1,11 @@
+services:
+  database:
+    image: docker.io/postgis/postgis:18-3.6-alpine
+    environment:
+      POSTGRES_USER: ikarita
+      POSTGRES_PASSWORD: ikarita
+      POSTGRES_DB: ikarita
+  api:
+    build:
+      context: ..
+
