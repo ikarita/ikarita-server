@@ -8,4 +8,5 @@ services:
   api:
     build:
       context: ..
+      dockerfile: Containerfile
 
